@@ -1,0 +1,28 @@
+#%Module1.0################
+## 
+## cmake 2.8 module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+# Basic Path
+set feelpath $::env(FEELPP_SHARE_PATH)
+set cmakepath $feelpath/cmake
+
+# Complete Pathes
+set cmakebinpath $path/bin
+set cmakelibpath $cmakepath/lib
+set cmakemanpath $cmakepath/share/man/man1/
+
+if [module-info mode load]  {
+	prepend-path PATH $cmakebinpath
+	prepend-path LD_LIBRARY_PATH $cmakelibpath
+
+	prepend-path MANPATH $cmakemanpath
+}
+
+if [module-info mode remove] {
+
+	remove-path PATH $cmakebinpath
+	remove-path LD_LIBRARY_PATH $cmakelibpath
+	remove-path MANPATH $cmakemanpath
+}

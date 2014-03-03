@@ -1,0 +1,50 @@
+#%Module1.0################
+## 
+## clang compiler 3.4 module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+# Basic Path
+set feelpath $::env(FEELPP_SHARE_PATH)
+set modulespath $::env(FEELPP_MODULE_PATH)/files
+set clangpath $feelpath/clang-3.4
+
+set pattern1 "compilers/gcc*.feelpp"
+set pattern2 "compilers/clang*.feelpp"
+set compilers [glob -tails -directory $modulespath -type f $pattern1 $pattern2]
+conflict {*}$compilers
+
+# Complete Pathes
+set clangbinpath $clangpath/bin
+set clanglibpath $clangpath/lib
+set clangmanpath $clangpath/share/man/man1/
+
+if [module-info mode load]  {
+	prepend-path PATH $clangbinpath
+	prepend-path LD_LIBRARY_PATH $clanglibpath
+
+	prepend-path MANPATH $clangmanpath
+
+        unsetenv LANGUAGE
+	unsetenv LANG
+	unsetenv LC
+
+	setenv CC $clangbinpath/clang
+	setenv CXX $clangbinpath/clang++
+	#setenv F77 $clangbinpath/gfortran
+	#setenv F90 $clangbinpath/gfortran
+	#setenv FC $clangbinpath/gfortran
+}
+
+if [module-info mode remove] {
+
+	remove-path PATH $clangbinpath
+	remove-path LD_LIBRARY_PATH $clanglibpath
+	remove-path MANPATH $clangmanpath
+
+	unsetenv CC
+	unsetenv CXX
+	#unsetenv F77
+	#unsetenv F90
+        #unsetenv FC
+}

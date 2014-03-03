@@ -1,0 +1,18 @@
+#%Module1.0################
+set feelpath $::env(FEELPP_SHARE_PATH)
+set gmshpath $feelpath/gmsh/2.6.1
+
+set gmshbinpath $gmshpath/bin
+set gmshlibpath $gmshpath/lib
+
+if [module-info mode load]  {
+	append-path PATH $gmshbinpath
+	prepend-path LD_LIBRARY_PATH $gmshlibpath
+	prepend-path GMSH_DIR $gmshpath
+}
+
+if [module-info mode remove] {
+        remove-path PATH $gmshbinpath
+        remove-path LD_LIBRARY_PATH $gmshlibpath
+        remove-path GMSH_DIR $gmshpath
+}

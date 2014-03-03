@@ -1,0 +1,54 @@
+#%Module1.0################
+## 
+## Gnu compiler 4.8.1 module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+# Basic Path
+set feelpath $::env(FEELPP_SHARE_PATH)
+set modulespath $::env(FEELPP_MODULE_PATH)/files
+set gnupath $feelpath/gcc-4.8.1
+
+# conflict with others compilers version
+set pattern1 "compilers/gcc*.feelpp"
+set pattern2 "compilers/clang*.feelpp"
+set compilers [glob -tails -directory $modulespath -type f $pattern1 $pattern2]
+conflict {*}$compilers
+
+# Complete Pathes
+set gnubinpath $gnupath/bin
+set gnulibpath $gnupath/lib
+set gnulib64path $gnupath/lib64
+set gnumanpath $gnupath/share/man/man1/
+
+if [module-info mode load]  {
+	prepend-path PATH $gnubinpath
+	append-path LD_LIBRARY_PATH $gnulibpath
+	append-path LD_LIBRARY_PATH $gnulib64path
+
+	prepend-path MANPATH $gnumanpath
+
+        unsetenv LANGUAGE
+	unsetenv LANG
+	unsetenv LC
+
+	setenv CC $gnubinpath/gcc
+	setenv CXX $gnubinpath/g++
+	setenv F77 $gnubinpath/gfortran
+	setenv F90 $gnubinpath/gfortran
+	setenv FC $gnubinpath/gfortran
+}
+
+if [module-info mode remove] {
+
+	remove-path PATH $gnubinpath
+	remove-path LD_LIBRARY_PATH $gnulibpath
+	remove-path LD_LIBRARY_PATH $gnulib64path
+	remove-path MANPATH $gnumanpath
+
+	unsetenv CC
+	unsetenv CXX
+	unsetenv F77
+	unsetenv F90
+        unsetenv FC
+}

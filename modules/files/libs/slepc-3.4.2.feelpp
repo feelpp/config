@@ -1,0 +1,26 @@
+#%Module1.0################
+## 
+## Sample boost module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+set feelpath $::env(FEELPP_SHARE_PATH)
+set slepcpath $feelpath/slepc/3.4.2
+# won't be needed : only static libraries
+set libpath $slepcpath/lib
+set binpath $slepcpath/bin
+set includepath $slepcpath/include
+
+if [module-info mode load]  {
+	prepend-path PATH $binpath
+	prepend-path LD_LIBRARY_PATH $libpath
+	setenv SLEPC_DIR $slepcpath
+}
+
+if [module-info mode remove] {
+
+	remove-path PATH $binpath
+	remove-path LD_LIBRARY_PATH $libpath
+	unsetenv SLEPC_DIR $slepcpath
+
+}
