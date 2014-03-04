@@ -9,7 +9,7 @@ set feelpath $::env(FEELPP_SHARE_PATH)
 set cmakepath $feelpath/cmake
 
 # Complete Pathes
-set cmakebinpath $path/bin
+set cmakebinpath $cmakepath/bin
 set cmakelibpath $cmakepath/lib
 set cmakemanpath $cmakepath/share/man/man1/
 
