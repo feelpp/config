@@ -5,8 +5,7 @@
 #
 #
 # Basic Path
-set feelpath $::env(FEELPP_SHARE_PATH)
-set cmakepath $feelpath/cmake
+set cmakepath $::env(FEELPP_CMAKE28_PATH)
 
 # Complete Pathes
 set cmakebinpath $cmakepath/bin

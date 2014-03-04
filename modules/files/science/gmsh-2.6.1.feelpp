@@ -1,6 +1,5 @@
 #%Module1.0################
-set feelpath $::env(FEELPP_SHARE_PATH)
-set gmshpath $feelpath/gmsh/2.6.1
+set gmshpath $::env(FEELPP_GMSH261_GCC_PATH)
 
 set gmshbinpath $gmshpath/bin
 set gmshlibpath $gmshpath/lib

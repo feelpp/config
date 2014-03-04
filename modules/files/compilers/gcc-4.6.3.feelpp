@@ -5,9 +5,9 @@
 #
 #
 # Basic Path
-set feelpath $::env(FEELPP_SHARE_PATH)
+
 set modulespath $::env(FEELPP_MODULE_PATH)/files
-set gnupath $feelpath/gcc-4.6.3
+set gnupath $::env(FEELPP_GCC463_PATH)
 
 # conflict with others compilers version
 set pattern1 "compilers/gcc*.feelpp"

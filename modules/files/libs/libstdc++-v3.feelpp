@@ -4,20 +4,17 @@
 ## Stdout dout contenir des commandes qui seront evaluees par le shell
 #
 #
-set petscpath $::env(FEELPP_PETSC33_GCC_PATH)
+set stdpath $::env(FEELPP_LIBSTCPPV3_PATH)
 
-set libpath $petscpath/lib
-set binpath $petscpath/bin
-set includepath $petscpath/include
+set libpath   $stdpath/lib
+set lib64path $stdpath/lib64
 
 if [module-info mode load]  {
-	append-path PATH $binpath
 	prepend-path LD_LIBRARY_PATH $libpath
-	prepend-path PETSC_DIR $petscpath
+	prepend-path LD_LIBRARY_PATH $lib64path
 }
 
 if [module-info mode remove] {
-	remove-path PATH $binpath
 	remove-path LD_LIBRARY_PATH $libpath
-	remove-path PETSC_DIR $petscpath
+	remove-path LD_LIBRARY_PATH $lib64path
 }

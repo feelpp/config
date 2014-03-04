@@ -5,9 +5,9 @@
 #
 #
 # Basic Path
-set feelpath $::env(FEELPP_SHARE_PATH)
+#
 set modulespath $::env(FEELPP_MODULE_PATH)/files
-set clangpath $feelpath/clang-3.4
+set clangpath $::env(FEELPP_CLANG34_PATH)
 
 set pattern1 "compilers/gcc*.feelpp"
 set pattern2 "compilers/clang*.feelpp"

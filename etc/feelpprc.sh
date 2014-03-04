@@ -1,31 +1,16 @@
 ################################################################################
-#
-# Author(s) - Guillaume Dollé <gdolle@math.unistra.fr>
+# Author(s): Guillaume Dollé <gdolle@math.unistra.fr>
 #
 # NOTE :
-#   - Add in your shell configuration script the following line:
-#       `source /path/to/this/feelpprc.sh`
-#   - If you clone the github repository, you should update the FEELPP_MODULE_PATH
-#     with the path to the modules directory.
+#   Just source this file. You can type in your favorite shell
+#   `echo "source /path/to/feelpprc.sh" >> ~/.bashrc`
 #
 ################################################################################
 
-
 module purge
 
-# Default feel++ local install
-export FEELPP_SHARE_PATH=/usr/local/feelpp/
+currentdir=${BASH_SOURCE[0]%/*}
+confdir=$currentdir/feelpprc.d
 
-# Default feel++ module path.
-export FEELPP_MODULE_PATH=/home/math/gdolle/devel/config/modules/
-
-# Default dynamic module path
-export MODULEPATH=$MODULEPATH:$FEELPP_MODULE_PATH/files:$FEELPP_MODULE_PATH/profiles
-
-# Custom rules per host
-case "$HOSTNAME" in
-    'hpc-login')
-        module load batch/slurm ;;
-esac
-
+source "$confdir/$HOSTNAME.sh"
 
