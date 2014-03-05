@@ -64,5 +64,6 @@ should remember when you create a new module for a library:
 - Use this environment variable as a reference for your module.
 - Add this environement variable to all existing cluster configs.
 
-
+The convention chosen for naming modules for libraries is:
+`<libname>-<the.version>_<compilerused>.feelpp`
 
