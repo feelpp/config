@@ -1,0 +1,15 @@
+#%Module1.0################
+set emacspath $::env(FEELPP_EMACS243_GCC_PATH)
+
+set emacsbinpath $emacspath/bin
+set emacslibpath $emacspath/lib
+
+if [module-info mode load]  {
+	prepend-path PATH $emacsbinpath
+	prepend-path LD_LIBRARY_PATH $emacslibpath
+}
+
+if [module-info mode remove] {
+        remove-path PATH $emacsbinpath
+        remove-path LD_LIBRARY_PATH $emacslibpath
+}
