@@ -1,0 +1,50 @@
+#%Module1.0################
+## 
+## bgclang compiler module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+# Basic Path
+#
+set modulespath $::env(FEELPP_MODULE_PATH)/files
+set bgclangpath $::env(FEELPP_BGCLANG_PATH)
+
+set pattern1 "compilers/gcc*.feelpp"
+set pattern2 "compilers/bgclang*.feelpp"
+set compilers [glob -tails -directory $modulespath -type f $pattern1 $pattern2]
+conflict {*}$compilers
+
+# Complete Pathes
+set bgclangbinpath $bgclangpath/bin
+set bgclanglibpath $bgclangpath/lib
+set bgclangmanpath $bgclangpath/share/man/man1/
+
+if [module-info mode load]  {
+	prepend-path PATH $bgclangbinpath
+	prepend-path LD_LIBRARY_PATH $bgclanglibpath
+
+	prepend-path MANPATH $bgclangmanpath
+
+        unsetenv LANGUAGE
+	unsetenv LANG
+	unsetenv LC
+
+	setenv CC $bgclangbinpath/bgclang
+	setenv CXX $bgclangbinpath/bgclang++
+	#setenv F77 $bgclangbinpath/gfortran
+	#setenv F90 $bgclangbinpath/gfortran
+	#setenv FC $bgclangbinpath/gfortran
+}
+
+if [module-info mode remove] {
+
+	remove-path PATH $bgclangbinpath
+	remove-path LD_LIBRARY_PATH $bgclanglibpath
+	remove-path MANPATH $bgclangmanpath
+
+	unsetenv CC
+	unsetenv CXX
+	#unsetenv F77
+	#unsetenv F90
+        #unsetenv FC
+}
