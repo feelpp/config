@@ -51,4 +51,5 @@ export FEELPP_GMSH282_GCC_PATH=
 #------------------------------------------------------------------------------
 
 # <... add your commands here ...>
-export FEELPP_LIBEDIT_GCC_PATH=$HOME/packages/lib
+export FEELPP_LIBEDIT_GCC_PATH=$HOME/modules/libs/libedit-3.1
+export FEELPP_GMP_GCC_PATH=$HOME/modules/libs/gmp-6.0.0
