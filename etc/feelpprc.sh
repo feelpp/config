@@ -12,5 +12,6 @@ module purge
 currentdir=${BASH_SOURCE[0]%/*}
 confdir=$currentdir/feelpprc.d
 
-source "$confdir/$HOSTNAME.sh"
+#source "$confdir/$HOSTNAME.sh"
+. "$confdir/$HOSTNAME.sh"
 

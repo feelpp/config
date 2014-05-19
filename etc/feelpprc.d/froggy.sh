@@ -50,10 +50,16 @@ export FEELPP_GMSH282_GCC_PATH=
 # CUSTOM COMMANDS
 #------------------------------------------------------------------------------
 
+# Load ciment env
+#. /applis/ciment/v2/env.bash
+
 module load binutils/2.21.1_gcc-4.6.2
 module load gnu-devel/4.6.2
 export LD_PRELOAD=/applis/ciment/v2/x86_64/lib/libc.so.6
 
 export FEELPP_LIBEDIT_GCC_PATH=$HOME/modules/libs/libedit-3.1
 export FEELPP_GMP_GCC_PATH=$HOME/modules/libs/gmp-6.0.0_gcc_4.6.2
+export FEELPP_MPFR_GCC_PATH=$HOME/modules/libs/mpfr-3.1.2_gcc_4.6.2
+export FEELPP_MPC_GCC_PATH=$HOME/modules/libs/mpc-1.0.2_gcc_4.6.2
 export FEELPP_PPL_GCC_PATH=$HOME/modules/libs/ppl-1.1_gcc_4.6.2
+export FEELPP_CLOOGPPL_GCC_PATH=$HOME/modules/libs/cloog-parma-0.16.1_gcc_4.6.2
