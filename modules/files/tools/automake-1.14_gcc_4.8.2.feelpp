@@ -1,0 +1,15 @@
+#%Module1.0################
+set automakepath $::env(FEELPP_AUTOMAKE_GCC_PATH)
+
+set automakebinpath $automakepath/bin
+set automakelibpath $automakepath/lib
+
+if [module-info mode load]  {
+	prepend-path PATH $automakebinpath
+	prepend-path LD_LIBRARY_PATH $automakelibpath
+}
+
+if [module-info mode remove] {
+        remove-path PATH $automakebinpath
+        remove-path LD_LIBRARY_PATH $automakelibpath
+}

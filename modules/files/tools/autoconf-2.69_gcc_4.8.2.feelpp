@@ -1,0 +1,15 @@
+#%Module1.0################
+set autoconfpath $::env(FEELPP_AUTOCONF269_GCC_PATH)
+
+set autoconfbinpath $autoconfpath/bin
+set autoconflibpath $autoconfpath/lib
+
+if [module-info mode load]  {
+	prepend-path PATH $autoconfbinpath
+	prepend-path LD_LIBRARY_PATH $autoconflibpath
+}
+
+if [module-info mode remove] {
+        remove-path PATH $autoconfbinpath
+        remove-path LD_LIBRARY_PATH $autoconflibpath
+}

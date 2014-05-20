@@ -1,0 +1,24 @@
+#%Module1.0################
+## 
+## Sample ann module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+set annpath $::env(FEELPP_ANN_GCC_PATH)
+
+# won't be needed : only static libraries
+set libpath $annpath/lib
+set binpath $annpath/bin
+set includepath $annpath/include
+
+if [module-info mode load]  {
+	prepend-path PATH $binpath
+	prepend-path LD_LIBRARY_PATH $libpath
+}
+
+if [module-info mode remove] {
+
+	remove-path PATH $binpath
+	remove-path LD_LIBRARY_PATH $libpath
+
+}
