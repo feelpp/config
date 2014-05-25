@@ -19,18 +19,20 @@ set binpath $gmppath/bin
 set includepath $gmppath/include
 
 if [module-info mode load]  {
-	append-path PATH $binpath
-	append-path  PATH $includepath
-	prepend-path LD_LIBRARY_PATH $libpath
-	setenv GMP_INC $includepath
-	setenv GMP_LIB $libpath
+    append-path PATH $binpath
+    append-path  PATH $includepath
+    prepend-path LD_LIBRARY_PATH $libpath
+    setenv GMP_DIR $gmppath
+    setenv GMP_INC $includepath
+    setenv GMP_LIB $libpath
 }
 
 if [module-info mode remove] {
-	remove-path PATH $binpath
-	remove-path PATH $includepath
-	remove-path LD_LIBRARY_PATH $libpath
-	unsetenv GMP_INC
-	unsetenv GMP_LIB
-	unsetenv GMP_LAST_CC
+    remove-path PATH $binpath
+    remove-path PATH $includepath
+    remove-path LD_LIBRARY_PATH $libpath
+    unsetenv GMP_DIR
+    unsetenv GMP_INC
+    unsetenv GMP_LIB
+    unsetenv GMP_LAST_CC
 }
