@@ -1,0 +1,50 @@
+#%Module1.0################
+## 
+## bgq-gcc472 compiler module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+# Basic Path
+#
+set modulespath $::env(FEELPP_MODULE_PATH)/files
+set bgq_gcc472path $::env(FEELPP_BGQ_GCC472_PATH)
+
+set pattern1 "compilers/gcc*.feelpp"
+set pattern2 "compilers/bgq-gcc472*.feelpp"
+set compilers [glob -tails -directory $modulespath -type f $pattern1 $pattern2]
+conflict {*}$compilers
+
+# Complete Pathes
+set bgq_gcc472binpath $bgq_gcc472path/bin
+set bgq_gcc472libpath $bgq_gcc472path/lib
+set bgq_gcc472manpath $bgq_gcc472path/share/man/man1/
+
+if [module-info mode load]  {
+	prepend-path PATH $bgq_gcc472binpath
+	prepend-path LD_LIBRARY_PATH $bgq_gcc472libpath
+
+	prepend-path MANPATH $bgq_gcc472manpath
+
+        unsetenv LANGUAGE
+	unsetenv LANG
+	unsetenv LC
+
+	setenv CC $bgq_gcc472binpath/powerpc64-bgq-linux-gcc
+	setenv CXX $bgq_gcc472binpath/powerpc64-bgq-linux-g++
+	#setenv F77 $bgq_gcc472binpath/powerpc64-bgq-linux-gfortran
+	#setenv F90 $bgq_gcc472binpath/powerpc64-bgq-linux-gccgfortran
+	setenv FC $bgq_gcc472binpath/powerpc64-bgq-linux-gfortran
+}
+
+if [module-info mode remove] {
+
+	remove-path PATH $bgq_gcc472binpath
+	remove-path LD_LIBRARY_PATH $bgq_gcc472libpath
+	remove-path MANPATH $bgq_gcc472manpath
+
+	unsetenv CC
+	unsetenv CXX
+	#unsetenv F77
+	#unsetenv F90
+        unsetenv FC
+}

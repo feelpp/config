@@ -1,10 +1,17 @@
-#%Module1.0################
+#%Module1.0################  -*- mode: tcl -*-
 ##
 ## Sample boost module
 ## Stdout dout contenir des commandes qui seront evaluees par le shell
 #
 #
+set modulespath $::env(FEELPP_MODULE_PATH)/files/
 set petscpath $::env(FEELPP_PETSC344_BGQ_PATH)
+
+# Dependency to at least one compiler.
+set pattern3 "compilers/bgclang*.feelpp"
+set pattern4 "compilers/bgq-*.feelpp"
+set compilers [glob -tails -directory $modulespath -type f $pattern3 $pattern4]
+prereq {*}$compilers
 
 set libpath $petscpath/lib
 set binpath $petscpath/bin

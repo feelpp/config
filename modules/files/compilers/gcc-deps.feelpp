@@ -1,0 +1,47 @@
+#%Module1.0################
+## 
+## Gnu compiler 4.7.3 module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+# Basic Path
+set modulespath $::env(FEELPP_MODULE_PATH)/files
+set gnupath $::env(FEELPP_GCCDEPS_PATH)
+
+# Complete Pathes
+set gnubinpath $gnupath/bin
+set gnulibpath $gnupath/lib
+set gnulib64path $gnupath/lib64
+set gnumanpath $gnupath/share/man/man1/
+
+if [module-info mode load]  {
+	prepend-path PATH $gnubinpath
+	prepend-path LD_LIBRARY_PATH $gnulibpath
+	prepend-path LD_LIBRARY_PATH $gnulib64path
+
+	prepend-path MANPATH $gnumanpath
+
+        unsetenv LANGUAGE
+	unsetenv LANG
+	unsetenv LC
+
+	setenv CC $gnubinpath/gcc
+	setenv CXX $gnubinpath/g++
+	setenv F77 $gnubinpath/gfortran
+	setenv F90 $gnubinpath/gfortran
+	setenv FC $gnubinpath/gfortran
+}
+
+if [module-info mode remove] {
+
+	remove-path PATH $gnubinpath
+	remove-path LD_LIBRARY_PATH $gnulibpath
+	remove-path LD_LIBRARY_PATH $gnulib64path
+	remove-path MANPATH $gnumanpath
+
+	unsetenv CC
+	unsetenv CXX
+	unsetenv F77
+	unsetenv F90
+        unsetenv FC
+}

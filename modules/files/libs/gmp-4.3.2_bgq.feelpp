@@ -5,7 +5,7 @@
 #
 #
 set modulespath $::env(FEELPP_MODULE_PATH)/files/
-set boostpath $::env(FEELPP_BOOST154_BGQ_PATH)
+set gmppath $::env(FEELPP_GMP432_BGQ_PATH)
 
 # Dependency to at least one compiler.
 set pattern3 "compilers/bgclang*.feelpp"
@@ -13,22 +13,24 @@ set pattern4 "compilers/bgq-*.feelpp"
 set compilers [glob -tails -directory $modulespath -type f $pattern3 $pattern4]
 prereq {*}$compilers
 
-# Choose the right path to boost.
-set libpath $boostpath/lib
-set binpath $boostpath/bin
-set includepath $boostpath/include
+# Choose the right path to gmp.
+set libpath $gmppath/lib
+set binpath $gmppath/bin
+set includepath $gmppath/include
 
 if [module-info mode load]  {
 	append-path PATH $binpath
 	append-path  PATH $includepath
 	prepend-path LD_LIBRARY_PATH $libpath
-	setenv BOOSTROOT $boostpath
+	setenv GMP_INC $includepath
+	setenv GMP_LIB $libpath
 }
 
 if [module-info mode remove] {
 	remove-path PATH $binpath
 	remove-path PATH $includepath
 	remove-path LD_LIBRARY_PATH $libpath
-	unsetenv BOOSTROOT $boostpath
-	unsetenv BOOST_LAST_CC
+	unsetenv GMP_INC
+	unsetenv GMP_LIB
+	unsetenv GMP_LAST_CC
 }
