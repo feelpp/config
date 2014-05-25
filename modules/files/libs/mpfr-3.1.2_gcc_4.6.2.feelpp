@@ -1,0 +1,24 @@
+#%Module1.0################
+## 
+## Sample mpfr module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+set mpfrpath $::env(FEELPP_MPFR_GCC_PATH)
+
+# won't be needed : only static libraries
+set libpath $mpfrpath/lib
+set binpath $mpfrpath/bin
+set includepath $mpfrpath/include
+
+if [module-info mode load]  {
+	prepend-path PATH $binpath
+	prepend-path LD_LIBRARY_PATH $libpath
+}
+
+if [module-info mode remove] {
+
+	remove-path PATH $binpath
+	remove-path LD_LIBRARY_PATH $libpath
+
+}

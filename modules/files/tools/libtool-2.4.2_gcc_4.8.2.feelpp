@@ -1,0 +1,15 @@
+#%Module1.0################
+set libtoolpath $::env(FEELPP_LIBTOOL_GCC_PATH)
+
+set libtoolbinpath $libtoolpath/bin
+set libtoollibpath $libtoolpath/lib
+
+if [module-info mode load]  {
+	prepend-path PATH $libtoolbinpath
+	prepend-path LD_LIBRARY_PATH $libtoollibpath
+}
+
+if [module-info mode remove] {
+        remove-path PATH $libtoolbinpath
+        remove-path LD_LIBRARY_PATH $libtoollibpath
+}
