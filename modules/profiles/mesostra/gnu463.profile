@@ -13,7 +13,7 @@ if [module-info mode load]  {
 	module load libs/boost-1.54_autocc.feelpp
 	module load visu/vtk
 	module load libs/petsc-3.5.1.feelpp
-	module load libs/slepc-3.4.2.feelpp
+	module load libs/slepc-3.5.0.feelpp
 	module load science/gmsh-2.8.5.feelpp
 }
 
@@ -24,6 +24,6 @@ if [module-info mode remove] {
 	module unload libs/boost-1.54_autocc.feelpp
 	module unload visu/vtk
 	module unload libs/petsc-3.5.1.feelpp
-	module unload libs/slepc-3.4.2.feelpp
+	module unload libs/slepc-3.5.0.feelpp
 	module unload science/gmsh-2.8.5.feelpp
 }
