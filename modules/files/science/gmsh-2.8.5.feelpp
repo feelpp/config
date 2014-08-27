@@ -1,0 +1,19 @@
+#%Module1.0################
+set gmshpath $::env(FEELPP_GMSH285_GCC_PATH)
+
+set gmshbinpath $gmshpath/bin
+set gmshlibpath $gmshpath/lib
+
+if [module-info mode load]  {
+	append-path PATH $gmshbinpath
+	prepend-path GMSH_DIR $gmshpath
+	prepend-path LD_LIBRARY_PATH $gmshlibpath
+	prepend-path LD_LIBRARY_PATH /opt/intel/composer_xe_2013.2.146/compiler/lib/intel64
+}
+
+if [module-info mode remove] {
+        remove-path PATH $gmshbinpath
+        remove-path GMSH_DIR $gmshpath
+        remove-path LD_LIBRARY_PATH $gmshlibpath
+	remove-path LD_LIBRARY_PATH /opt/intel/composer_xe_2013.2.146/compiler/lib/intel64
+}
