@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+t(){ type "$1"&>/dev/null;}
+
+# Determine dialog box program
+while :
+do
+   t whiptail && DIALOG=whiptail && break
+   t dialog && DIALOG=dialog && DIALOG_ESC=-- && break
+   exec date +s"Dialog or whiptail must be installed!"
+done;
+
+# full path to dirs and modules
+moddirs=$(find modules/files/src -type d)
+mods=$(find modules/files/src -type f)
+
+# Return modlist variable
+for i in $mods
+do
+    modbase=$(basename $(dirname $i))
+    modlist="$modlist\"\" $modbase/$(basename $i) \"\" "
+done
+
+#--------------------------------------------------------------------------------
+# FUNCTIONS
+#--------------------------------------------------------------------------------
+
+# Return HPCNAME variable
+function Menu.Hostname
+{
+    HPCNAME=$( $DIALOG \
+               --title "HPC name" \
+               --inputbox "Set cluster front-end hostname" \
+               0 0 $HOSTNAME $DIALOG_ESC "$@" \
+               3>&1 1>&2 2>&3 );
+    echo "HPCNAME=$HPCNAME" > ./etc/hpcname
+    mkdir -p ./modules/files/$HPCNAME
+}
+
+
+
+function Menu.Modules
+{
+    selectmods=$( $DIALOG \
+         --title "HPC frontal hostname" \
+         --checklist "Select modules to install:" 0 0 \
+         $modlist \
+         $HOSTNAME $DIALOG_ESC "$@" \
+         3>&1 1>&2 2>&3 );
+
+    # Create symlinks
+    for istr in $selectmods
+    do
+        inoquotes=${istr:1:${#istr}-2}
+        mkdir -p ./modules/files/$HPCNAME/$(dirname $inoquotes)
+        ln -s ./modules/files/src/$inoquotes  \
+              ./modules/files/$HPCNAME/$inoquotes
+    done
+}
+
+#--------------------------------------------------------------------------------
+# Main
+#--------------------------------------------------------------------------------
+Menu.Hostname
+Menu.Modules
