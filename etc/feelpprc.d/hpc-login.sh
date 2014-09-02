@@ -14,7 +14,7 @@ export FEELPP_SHARE_PATH=/usr/local/feelpp
 export FEELPP_MODULE_PATH=/usr/local/feelpp/config/modules
 
 # Custom feel++ modules
-export MODULEPATH=$MODULEPATH:$FEELPP_MODULE_PATH/files
+export MODULEPATH=$MODULEPATH:$FEELPP_MODULE_PATH/files/mesostra
 export MODULEPATH=$MODULEPATH:$FEELPP_MODULE_PATH/profiles/mesostra
 
 # Compilers

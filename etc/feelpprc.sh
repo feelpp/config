@@ -11,6 +11,13 @@ module purge
 
 currentdir=${BASH_SOURCE[0]%/*}
 confdir=$currentdir/feelpprc.d
+hpcnamefile=$currentdir/hpcname
 
-source "$confdir/$HOSTNAME.sh"
-
+if [ -f $hpcnamefile ]
+then
+    source "$confdir/$HPCNAME.sh"
+else
+    echo "-- HPCNAME variable not found!
+=> Feel++ modules might not be configured correctly.
+=> Please contact an administrator"
+fi

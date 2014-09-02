@@ -33,21 +33,35 @@ machine].
 
 ## Tree
 
-| Directory         | Description                    |
-| ----------------- | ------------------------------ |
-| etc/              | all configs scripts            |
-| etc/feelpprc.d/   | clusters custom configs        |
-| modules/          | all dynamic modules            |
-| modules/files/    | modules for libraries          |
-| modules/profiles/ | profiles as a set of modules   |
+| Directory                  | Description                    |
+| -------------------------- | ------------------------------ |
+| etc/                       | all configs scripts            |
+| etc/feelpprc.d/            | clusters custom configs        |
+| modules/                   | all dynamic modules            |
+| modules/files/             | modules                        |
+| modules/files/src          | modules sources                |
+| modules/files/<machine>    | symlink to modules per machine |
+| modules/profiles/          | profiles as a set of modules   |
+| modules/profiles/<machine> | profiles per machine   |
 
 ## How to configure a new machine
 
+Run the configuration script
+```./configure```
+
+This script will prompt a menu to:
+1 - configure the hostname of the front-end. It creates the file `/etc/hpcname`
+    which contains the variable HPCNAME.
+2 - choose modules to install depending on your installation.
+3 - (not yet) create the config file in /etc/feelpp.d for the cluster.
+
+Do step 3 manually:
+
 Check the file `template.sh` in the directory `/etc/feelpprc`.
-A config file contains all path to the local installs of your softwares.
+A config file contains all path to local installs of your softwares.
 To configure a new machine, follow these steps:
 
-- copy/paste `template.sh` in `/etc/feelpprc` and rename it with the machine
+- copy/paste `template.sh` in `/etc/feelpprc` and rename it with the front-end
   hostname.
 - Update all path to fit your local installs.
 - [ Optional ] create new profiles for your machine.
