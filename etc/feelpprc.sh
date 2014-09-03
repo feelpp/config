@@ -20,6 +20,7 @@ if [ -f $hpcnamefile ]
 then
 		# get the value of HPCNAME
 		source $hpcnamefile
+		export FEELPP_HPCNAME=${HPCNAME}
 		# source the corresponding configuration
     source "$confdir/$HPCNAME.sh"
 else

@@ -16,11 +16,11 @@
 export FEELPP_SHARE_PATH=$WORK/local
 
 # Default feel++ module path.
-export FEELPP_MODULE_PATH=$WORK/local/config/modules
+#export FEELPP_MODULE_PATH=$WORK/local/config/modules
 
 # Custom feel++ modules
-export MODULEPATH=$MODULEPATH:$FEELPP_MODULE_PATH/files
-export MODULEPATH=$MODULEPATH:$FEELPP_MODULE_PATH/profiles
+export MODULEPATH=$MODULEPATH:$FEELPP_MODULE_PATH/files/$FEELPP_HPCNAME
+export MODULEPATH=$MODULEPATH:$FEELPP_MODULE_PATH/profiles/$FEELPP_HPCNAME
 
 # Compilers
 export FEELPP_CLANG33_PATH=

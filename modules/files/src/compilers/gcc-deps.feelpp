@@ -5,7 +5,7 @@
 #
 #
 # Basic Path
-set modulespath $::env(FEELPP_MODULE_PATH)/files
+set modulespath $::env(FEELPP_MODULE_PATH)/files/$::env(FEELPP_HPCNAME)
 set gnupath $::env(FEELPP_GCCDEPS_PATH)
 
 # Complete Pathes

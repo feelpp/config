@@ -25,11 +25,11 @@ module load Compilers-GCC48
 export FEELPP_SHARE_PATH=$HOME/feelpp
 
 # Default feel++ module path.
-export FEELPP_MODULE_PATH=$HOME/github/feelpp.config/modules
+#export FEELPP_MODULE_PATH=$HOME/github/feelpp.config/modules
 
 # Custom feel++ modules
-export MODULEPATH=$MODULEPATH:$FEELPP_MODULE_PATH/files
-export MODULEPATH=$MODULEPATH:$FEELPP_MODULE_PATH/profiles/froggy
+export MODULEPATH=$MODULEPATH:$FEELPP_MODULE_PATH/files/$FEELPP_HPCNAME
+export MODULEPATH=$MODULEPATH:$FEELPP_MODULE_PATH/profiles/$FEELPP_HPCNAME
 
 # Compilers
 export FEELPP_CLANG33_PATH=

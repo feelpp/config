@@ -6,7 +6,7 @@
 #
 # Basic Path
 
-set modulespath $::env(FEELPP_MODULE_PATH)/files
+set modulespath $::env(FEELPP_MODULE_PATH)/files/$::env(FEELPP_HPCNAME)
 set gnupath $::env(FEELPP_GCC463_PATH)
 
 # conflict with others compilers version

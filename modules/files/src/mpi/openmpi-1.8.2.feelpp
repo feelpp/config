@@ -3,7 +3,7 @@
 ## Maintainer(s) : Guillaume Dollé <gdole at unistra.f>
 #
 set modulespath $::env(FEELPP_MODULE_PATH)/files/$::env(FEELPP_HPCNAME)
-set mpipath $::env(FEELPP_OPENMPI163_GCC472_PATH)
+set mpipath $::env(FEELPP_OPENMPI182_PATH)
 
 # Dependency to at least one compiler.
 set pattern1 "compilers/gcc*.feelpp"

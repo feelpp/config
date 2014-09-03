@@ -2,7 +2,7 @@
 ##
 ## Maintainer(s) : Guillaume Dollé <gdole at unistra.f>
 #
-set modulespath $::env(FEELPP_MODULE_PATH)/files/
+set modulespath $::env(FEELPP_MODULE_PATH)/files/$::env(FEELPP_HPCNAME)
 set ompipath $::env(FEELPP_OPENMPI163_AUTOCC_PATH)
 
 # Dependency to at least one compiler.

@@ -4,7 +4,7 @@
 ## Stdout dout contenir des commandes qui seront evaluees par le shell
 #
 #
-set modulespath $::env(FEELPP_MODULE_PATH)/files/
+set modulespath $::env(FEELPP_MODULE_PATH)/files/$::env(FEELPP_HPCNAME)
 set allboostpath $::env(FEELPP_BOOST149_AUTOCC_PATH)
 
 # Dependency to at least one compiler.
