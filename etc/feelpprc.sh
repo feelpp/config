@@ -13,8 +13,14 @@ currentdir=${BASH_SOURCE[0]%/*}
 confdir=$currentdir/feelpprc.d
 hpcnamefile=$currentdir/hpcname
 
+# set the module apth relatively to the current directory (so the config is also available for user clones)
+export FEELPP_MODULE_PATH="$currentdir/../modules"
+
 if [ -f $hpcnamefile ]
 then
+		# get the value of HPCNAME
+		source $hpcnamefile
+		# source the corresponding configuration
     source "$confdir/$HPCNAME.sh"
 else
     echo "-- HPCNAME variable not found!
