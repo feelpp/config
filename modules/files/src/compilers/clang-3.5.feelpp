@@ -7,7 +7,20 @@
 # Basic Path
 #
 set modulespath $::env(FEELPP_MODULE_PATH)/files/$::env(FEELPP_HPCNAME)
-set clangpath $::env(FEELPP_CLANG34_PATH)
+set clangpath $::env(FEELPP_CLANG35_PATH)
+
+# (initial non working version) grab the version of gcc, ensure that we have a version at least superior to 4.7 (clang 3.5 requires ABI 4.7)
+#set retcode [system gcc --version | grep gcc | cut -d" " -f3 | awk '{n=split($1, a, "."); if(n > 2 && a[1] * 10 + a[2] >= 47){ exit 1; }else{ exit 0; } }']
+
+# get gcc version, extract the first 2 numbers (e.g. 4.7), build a comparison string that is passe to bc for float comparison and test the return of bc
+# return 0 if not OK, exit status of xargs if ok
+set retcode [system gcc --version | grep gcc | cut -d\" \" -f3 | cut -d\".\" -f1,2 | xargs echo \"4.7 <=\" | bc | xargs -I in test in -eq 0 ]
+
+if {$retcode == 0} {
+	system echo \"Clang 3.5 requires at least GCC 4.7 ABI (load a corresponding module)\"
+	system echo \"Clang 3.5 module not loaded\"
+	exit 0
+}
 
 #set pattern1 "compilers/gcc*.feelpp"
 #set pattern2 "compilers/clang*.feelpp"

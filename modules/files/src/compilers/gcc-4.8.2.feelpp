@@ -11,8 +11,9 @@ set gccdepspath $::env(FEELPP_SHARE_PATH)
 
 # conflict with others compilers version
 set pattern1 "compilers/gcc*.feelpp"
-set pattern2 "compilers/clang*.feelpp"
-set compilers [glob -tails -directory $modulespath -type f $pattern1 $pattern2]
+#set pattern2 "compilers/clang*.feelpp"
+set compilers [glob -tails -directory $modulespath -type f $pattern1]
+#set compilers [glob -tails -directory $modulespath -type f $pattern1 $pattern2]
 conflict {*}$compilers
 
 set ldlibpath "$gccdepspath/ppl/0.11/lib/:$gccdepspath/mpfr/2.4.2/lib/:$gccdepspath/cloog-ppl/0.15.11/lib/:$gccdepspath/mpc/0.8.1/lib/:$gccdepspath/gmp/4.3.2/lib/"

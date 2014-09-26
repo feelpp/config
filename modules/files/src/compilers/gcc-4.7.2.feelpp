@@ -10,8 +10,9 @@ set gnupath $::env(FEELPP_GCC472_PATH)
 
 # conflict with others compilers version
 set pattern1 "compilers/gcc*.feelpp"
-set pattern2 "compilers/clang*.feelpp"
-set compilers [glob -tails -directory $modulespath -type f $pattern1 $pattern2]
+#set pattern2 "compilers/clang*.feelpp"
+set compilers [glob -tails -directory $modulespath -type f $pattern1]
+#set compilers [glob -tails -directory $modulespath -type f $pattern1 $pattern2]
 conflict {*}$compilers
 
 # Complete Pathes
