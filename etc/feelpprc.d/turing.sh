@@ -53,7 +53,7 @@ export FEELPP_GMSH284_BGQ_PATH=$COMMONDIR/local/gmsh/2.8.5-bgq
 export FEELPP_EMACS243_GCC_PATH=$COMMONDIR/local/emacs/24.3
 
 # TOOLS
-export FEELPP_GIT19_GCC_PATH=$COMMONDIR/local/git/1.9
+export FEELPP_GIT_GCC_PATH=$COMMONDIR/local/git/2.1.2
 
 #------------------------------------------------------------------------------
 # CUSTOM COMMANDS

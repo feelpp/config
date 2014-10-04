@@ -1,5 +1,5 @@
 #%Module1.0################
-set gitpath $::env(FEELPP_GIT19_GCC_PATH)
+set gitpath $::env(FEELPP_GIT_GCC_PATH)
 
 set gitbinpath $gitpath/bin
 set gitlibpath $gitpath/lib
