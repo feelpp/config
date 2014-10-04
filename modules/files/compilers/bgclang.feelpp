@@ -29,8 +29,8 @@ if [module-info mode load]  {
 	unsetenv LANG
 	unsetenv LC
 
-	setenv CC $bgclangbinpath/bgclang
-	setenv CXX $bgclangbinpath/bgclang++
+	setenv CC $bgclangbinpath/powerpc64-bgq-linux-clang
+	setenv CXX $bgclangbinpath/powerpc64-bgq-linux-clang++11
 	#setenv F77 $bgclangbinpath/gfortran
 	#setenv F90 $bgclangbinpath/gfortran
 	#setenv FC $bgclangbinpath/gfortran
