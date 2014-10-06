@@ -34,6 +34,7 @@ function Menu.Hostname
                    --title "Modules HPC name" \
                    --inputbox "Set cluster front-end hostname" \
                    0 0 \
+                   $HOSTNAME \
                    $DIALOG_ESC "$@" \
                    3>&1 1>&2 2>&3 );
         echo "HPCNAME=$HPCNAME" > ./etc/hpcname
@@ -57,21 +58,35 @@ function Menu.Hostname
 
 function Menu.Modules
 {
-    selectmods=$( $DIALOG \
-         --title "HPC frontal hostname" \
-         --checklist "Select modules to install:" 0 0 \
-         $modlist \
-         $HOSTNAME $DIALOG_ESC "$@" \
-         3>&1 1>&2 2>&3 );
+    if [ ! -f "./etc/hpcname" ]
+    then
+        $DIALOG --title "Confirm" \
+                --yesno \
+                "Set the HPCNAME first" \
+                0 0 \
+                $DIALOG_ESC "$@"
+        case $? in
+           0) Menu.Hostname ;;
+           *) ;; # Exit
+        esac
+    else
+        source ./etc/hpcname
+        selectmods=$( $DIALOG \
+             --title "HPC frontal hostname" \
+             --checklist "Select modules to install:" 0 0 \
+             $modlist \
+             $HOSTNAME $DIALOG_ESC "$@" \
+             3>&1 1>&2 2>&3 );
 
-    # Create symlinks
-    for istr in $selectmods
-    do
-        inoquotes=${istr:1:${#istr}-2}
-        mkdir -p ./modules/files/$HPCNAME/$(dirname $inoquotes)
-        ln -s ./modules/files/src/$inoquotes  \
-              ./modules/files/$HPCNAME/$inoquotes
-    done
+        # Create symlinks
+        for istr in $selectmods
+        do
+            inoquotes=${istr:1:${#istr}-2}
+            mkdir -p ./modules/files/$HPCNAME/$(dirname $inoquotes)
+            ln -s ../../src/$inoquotes  \
+                  ./modules/files/$HPCNAME/$inoquotes
+        done
+    fi
 }
 
 function Menu.Show
