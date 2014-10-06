@@ -6,6 +6,7 @@ while :
 do
    t whiptail && DIALOG=whiptail && break
    t dialog && DIALOG=dialog && DIALOG_ESC=-- && break
+   t tcdialog && DIALOG=tcdialog && DIALOG_ESC=-- && break
    exec date +s"Dialog or whiptail must be installed!"
 done;
 
@@ -27,13 +28,29 @@ done
 # Return HPCNAME variable
 function Menu.Hostname
 {
-    HPCNAME=$( $DIALOG \
-               --title "HPC name" \
-               --inputbox "Set cluster front-end hostname" \
-               0 0 $HOSTNAME $DIALOG_ESC "$@" \
-               3>&1 1>&2 2>&3 );
-    echo "HPCNAME=$HPCNAME" > ./etc/hpcname
-    mkdir -p ./modules/files/$HPCNAME
+    if [ ! -f "./etc/hpcname" ]
+    then
+        HPCNAME=$( $DIALOG \
+                   --title "Modules HPC name" \
+                   --inputbox "Set cluster front-end hostname" \
+                   0 0 \
+                   $DIALOG_ESC "$@" \
+                   3>&1 1>&2 2>&3 );
+        echo "HPCNAME=$HPCNAME" > ./etc/hpcname
+        mkdir -p ./modules/files/$HPCNAME
+    else
+        $DIALOG --title "Confirm" \
+                --yesno \
+                " A previous HPCNAME has been found !\nDo you want to reconfigure the HPC name ?" \
+                0 0 \
+                $DIALOG_ESC "$@"
+
+        case $? in
+           0) rm ./etc/hpcname
+              Menu.Hostname ;;
+           *) ;; # Exit
+        esac
+    fi
 }
 
 
@@ -57,8 +74,30 @@ function Menu.Modules
     done
 }
 
+function Menu.Show
+{
+    menuchoice=$( $DIALOG \
+                   --title "Menu" \
+                   --ok-button "select" \
+                   --cancel-button "exit" \
+                   --menu "Cluster module configuration (Experimental)" 20 40 0\
+                   1 "Hpcname" \
+                   2 "Modules" \
+                   $DIALOG_ESC "$@" \
+                   3>&1 1>&2 2>&3 );
+}
+
 #--------------------------------------------------------------------------------
 # Main
 #--------------------------------------------------------------------------------
-Menu.Hostname
-Menu.Modules
+
+run=true
+while($run)
+do
+    Menu.Show
+    case  $menuchoice in
+      1) Menu.Hostname;;
+      2) Menu.Modules;;
+      *) run=false # exit
+    esac
+done
