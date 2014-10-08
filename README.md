@@ -24,12 +24,13 @@ For the user point of view, to load the Feel++ environment, with the new method:
 - There are several profiles available which are typically just a set of
   modules. For example to load a clang-3.3 profile type, ``` module load
   clang33.profile ```
+- Prefer to use `.profile` modules that guaranty a working environment!
 
 # Administrators notes
 
 The following notes supposed that
 [dynamicmodules](http://modules.sourceforge.net/) are available on the
-machine].
+machine.
 
 ## Tree
 
