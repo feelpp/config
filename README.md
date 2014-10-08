@@ -51,11 +51,11 @@ You can run the configuration script
 `./configure` (yet experimental)
 
 This script will prompt a menu to automatise the follwing steps:
-1. Configure the hostname of the front-end. Create a file `/etc/hpcname`
+- 1. Configure the hostname of the front-end. Create a file `/etc/hpcname`
   which contains the variable HPCNAME=\<machine_name\>.
-2. Create symlinks per installed modules in `modules/files/<machine>` from existing modules
+- 2. Create symlinks per installed modules in `modules/files/<machine>` from existing modules
   in `modules/files/src/`
-3. Create the config file in /etc/feelpp.d for the cluster. Check the file `template.sh` in the directory `/etc/feelpprc`. A config file contains all path to local installs of your softwares.
+- 3. Create the config file in /etc/feelpp.d for the cluster. Check the file `template.sh` in the directory `/etc/feelpprc`. A config file contains all path to local installs of your softwares.
 
 Step 3:
 - copy/paste `template.sh` in `/etc/feelpprc` and rename it with the front-end
