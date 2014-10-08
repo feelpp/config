@@ -8,6 +8,7 @@
 
 if [module-info mode load]  {
 	module load compilers/gcc-4.8.1.feelpp
+  module load compilers/clang-3.5.feelpp
 	module load mpi/openmpi-1.8.3.feelpp
 	module load libs/boost-1.56.feelpp
 	module load visu/vtk
@@ -18,6 +19,7 @@ if [module-info mode load]  {
 
 if [module-info mode remove] {
 	module unload compilers/gcc-4.8.1.feelpp
+  module unload compilers/clang-3.5.feelpp
 	module unload mpi/openmpi-1.8.3.feelpp
 	module unload libs/boost-1.56.feelpp
 	module unload visu/vtk
