@@ -1,0 +1,15 @@
+#%Module1.0################
+set gitpath $::env(FEELPP_GIT_GCC_PATH)
+
+set gitbinpath $gitpath/bin
+set gitlibpath $gitpath/lib
+
+if [module-info mode load]  {
+	prepend-path PATH $gitbinpath
+	prepend-path LD_LIBRARY_PATH $gitlibpath
+}
+
+if [module-info mode remove] {
+        remove-path PATH $gitbinpath
+        remove-path LD_LIBRARY_PATH $gitlibpath
+}
