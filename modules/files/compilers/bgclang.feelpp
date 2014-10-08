@@ -16,6 +16,7 @@ conflict {*}$compilers
 set bgclangbinpath $bgclangpath/bin
 set bgclanglibpath $bgclangpath/lib
 set bgclangmanpath $bgclangpath/share/man/man1/
+<<<<<<< .merge_file_QhWOpX
 if [module-info mode load] {
 prepend-path PATH $bgclangbinpath
 prepend-path LD_LIBRARY_PATH $bgclanglibpath
@@ -28,6 +29,24 @@ setenv CXX $bgclangbinpath/powerpc64-bgq-linux-clang++11
 #setenv F77 $bgclangbinpath/gfortran
 #setenv F90 $bgclangbinpath/gfortran
 #setenv FC $bgclangbinpath/gfortran
+=======
+
+if [module-info mode load]  {
+	prepend-path PATH $bgclangbinpath
+	prepend-path LD_LIBRARY_PATH $bgclanglibpath
+
+	prepend-path MANPATH $bgclangmanpath
+
+        unsetenv LANGUAGE
+	unsetenv LANG
+	unsetenv LC
+
+	setenv CC $bgclangbinpath/powerpc64-bgq-linux-clang
+	setenv CXX $bgclangbinpath/powerpc64-bgq-linux-clang++11
+	#setenv F77 $bgclangbinpath/gfortran
+	#setenv F90 $bgclangbinpath/gfortran
+	#setenv FC $bgclangbinpath/gfortran
+>>>>>>> .merge_file_RPpnPW
 }
 if [module-info mode remove] {
 remove-path PATH $bgclangbinpath
