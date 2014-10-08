@@ -55,16 +55,8 @@ This script will prompt a menu to automatise the follwing steps:
   which contains the variable HPCNAME=\<machine_name\>.
 - 2. Create symlinks per installed modules in `modules/files/<machine>` from existing modules
   in `modules/files/src/`
-- 3. Create the config file in /etc/feelpp.d for the cluster. Check the file `template.sh` in the directory `/etc/feelpprc`. A config file contains all path to local installs of your softwares.
-
-Step 3:
-- copy/paste `template.sh` in `/etc/feelpprc` and rename it with the front-end
-  hostname.
-- Update all path to fit your local installs.
-- Each module contains a variable path that must me set in the cluster config file.
-
-Also you can select/install the modules/softwares depending on your requirements
-(see profile modules to get an idea of what is required).
+- 3. Create the config file in `/etc/feelpp.d/<machine>` for the cluster. You can take the file `/etc/feelpprc.d/template.sh` as an example. A config file contains all path to your software local installs.
+ (Note: each module script contains a variable path that must me set in the cluster config file!)
 
 ## How to create a new module
 
