@@ -50,7 +50,7 @@ machine.
 You can run the configuration script
 `./configure` (yet experimental)
 
-This script will prompt a menu to automatise the follwing steps:
+This script will prompt a menu to automatise the following steps:
 - 1. Configure the hostname of the front-end. Create a file `/etc/hpcname`
   which contains the variable HPCNAME=\<machine_name\>.
 - 2. Create symlinks per installed modules in `modules/files/<machine>` from existing modules
