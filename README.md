@@ -24,12 +24,13 @@ For the user point of view, to load the Feel++ environment, with the new method:
 - There are several profiles available which are typically just a set of
   modules. For example to load a clang-3.3 profile type, ``` module load
   clang33.profile ```
+- Prefer to use `.profile` modules that guaranty a working environment!
 
 # Administrators notes
 
 The following notes supposed that
 [dynamicmodules](http://modules.sourceforge.net/) are available on the
-machine].
+machine.
 
 ## Tree
 
@@ -40,44 +41,32 @@ machine].
 | modules/                   | all dynamic modules            |
 | modules/files/             | modules                        |
 | modules/files/src          | modules sources                |
-| modules/files/<machine>    | symlink to modules per machine |
-| modules/profiles/          | profiles as a set of modules   |
-| modules/profiles/<machine> | profiles per machine   |
+| modules/files/\<machine\>    | symlink to modules per machine |
+| modules/profiles/            | profiles as a set of modules   |
+| modules/profiles/\<machine\> | profiles per machine           |
 
 ## How to configure a new machine
 
-Run the configuration script
-```./configure```
+You can run the configuration script
+`./configure` (yet experimental)
 
-This script will prompt a menu to:
-1 - configure the hostname of the front-end. It creates the file `/etc/hpcname`
-    which contains the variable HPCNAME.
-2 - choose modules to install depending on your installation.
-3 - (not yet) create the config file in /etc/feelpp.d for the cluster.
-
-Do step 3 manually:
-
-Check the file `template.sh` in the directory `/etc/feelpprc`.
-A config file contains all path to local installs of your softwares.
-To configure a new machine, follow these steps:
-
-- copy/paste `template.sh` in `/etc/feelpprc` and rename it with the front-end
-  hostname.
-- Update all path to fit your local installs.
-- [ Optional ] create new profiles for your machine.
-
-Also you can select/install the modules/softwares depending on your requirements
-(see profile modules to get an idea of what is required).
+This script will prompt a menu to automatise the following steps:
+- 1. Configure the hostname of the front-end. Create a file `etc/hpcname`
+  which contains the variable `HPCNAME=<machine>`.
+- 2. Create symlinks per installed modules in `modules/files/<machine>` from existing modules
+  in `modules/files/src/`
+- 3. Create the config file in `etc/feelpp.d/<machine>` for the cluster. You can take the file `etc/feelpprc.d/template.sh` as an example. A config file contains all path to your software local installs.
+ (Note: each module script contains a variable path that must me set in the cluster config file)
 
 ## How to create a new module
 
-You can check existing modules in `modules/` directory. There are three things you
+You can check existing modules in `modules/files/src/` directory. There are three things you
 should remember when you create a new module for a library:
 
-- Define a new environment variable for the path where is installed your program.
-- Use this environment variable as a reference for your module.
-- Add this environement variable to all existing cluster configs.
+- Define a new environment variable containing the path of where your library is installed.
+- Use this new environment variable as a reference for your module.
+- Add this new environment variable to the your cluster config file.
 
-The convention chosen for naming modules for libraries is:
+The convention chosen for naming modules is:
 `<libname>-<the.version>_<compilerused>.feelpp`
 
