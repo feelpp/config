@@ -40,38 +40,34 @@ machine].
 | modules/                   | all dynamic modules            |
 | modules/files/             | modules                        |
 | modules/files/src          | modules sources                |
-| modules/files/<machine>    | symlink to modules per machine |
-| modules/profiles/          | profiles as a set of modules   |
-| modules/profiles/<machine> | profiles per machine   |
+| modules/files/\<machine\>    | symlink to modules per machine |
+| modules/profiles/            | profiles as a set of modules   |
+| modules/profiles/\<machine\> | profiles per machine           |
 
 ## How to configure a new machine
 
-Run the configuration script
-```./configure```
+You can run the configuration script
+`./configure` (yet experimental)
 
-This script will prompt a menu to:
-1 - configure the hostname of the front-end. It creates the file `/etc/hpcname`
-    which contains the variable HPCNAME.
-2 - choose modules to install depending on your installation.
-3 - (not yet) create the config file in /etc/feelpp.d for the cluster.
+This script will prompt a menu to automatise:
+1 - configure the hostname of the front-end. Create a file `/etc/hpcname`
+  which contains the variable HPCNAME=\<machine_name\>.
+2 - create symlinks per installed modules in `modules/files/<machine>` from existing modules
+  in `modules/files/src/`
+3 - create the config file in /etc/feelpp.d for the cluster. Check the file `template.sh` in the directory `/etc/feelpprc`. A config file contains all path to local installs of your softwares.
 
-Do step 3 manually:
-
-Check the file `template.sh` in the directory `/etc/feelpprc`.
-A config file contains all path to local installs of your softwares.
-To configure a new machine, follow these steps:
-
+Step 3:
 - copy/paste `template.sh` in `/etc/feelpprc` and rename it with the front-end
   hostname.
 - Update all path to fit your local installs.
-- [ Optional ] create new profiles for your machine.
+- Each module contains a variable path that must me set in the cluster config file.
 
 Also you can select/install the modules/softwares depending on your requirements
 (see profile modules to get an idea of what is required).
 
 ## How to create a new module
 
-You can check existing modules in `modules/` directory. There are three things you
+You can check existing modules in `modules/src/` directory. There are three things you
 should remember when you create a new module for a library:
 
 - Define a new environment variable for the path where is installed your program.
