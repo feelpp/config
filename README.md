@@ -51,22 +51,22 @@ You can run the configuration script
 `./configure` (yet experimental)
 
 This script will prompt a menu to automatise the following steps:
-- 1. Configure the hostname of the front-end. Create a file `/etc/hpcname`
-  which contains the variable HPCNAME=\<machine_name\>.
+- 1. Configure the hostname of the front-end. Create a file `etc/hpcname`
+  which contains the variable `HPCNAME=\<machine\>`.
 - 2. Create symlinks per installed modules in `modules/files/<machine>` from existing modules
   in `modules/files/src/`
-- 3. Create the config file in `/etc/feelpp.d/<machine>` for the cluster. You can take the file `/etc/feelpprc.d/template.sh` as an example. A config file contains all path to your software local installs.
- (Note: each module script contains a variable path that must me set in the cluster config file!)
+- 3. Create the config file in `etc/feelpp.d/<machine>` for the cluster. You can take the file `etc/feelpprc.d/template.sh` as an example. A config file contains all path to your software local installs.
+ (Note: each module script contains a variable path that must me set in the cluster config file)
 
 ## How to create a new module
 
-You can check existing modules in `modules/src/` directory. There are three things you
+You can check existing modules in `modules/files/src/` directory. There are three things you
 should remember when you create a new module for a library:
 
-- Define a new environment variable for the path where is installed your program.
-- Use this environment variable as a reference for your module.
-- Add this environement variable to all existing cluster configs.
+- Define a new environment variable containing the path of where your library is installed.
+- Use this new environment variable as a reference for your module.
+- Add this new environment variable to the your cluster config file.
 
-The convention chosen for naming modules for libraries is:
+The convention chosen for naming modules is:
 `<libname>-<the.version>_<compilerused>.feelpp`
 
