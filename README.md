@@ -52,7 +52,7 @@ You can run the configuration script
 
 This script will prompt a menu to automatise the following steps:
 - 1. Configure the hostname of the front-end. Create a file `etc/hpcname`
-  which contains the variable `HPCNAME=\<machine\>`.
+  which contains the variable `HPCNAME=<machine>`.
 - 2. Create symlinks per installed modules in `modules/files/<machine>` from existing modules
   in `modules/files/src/`
 - 3. Create the config file in `etc/feelpp.d/<machine>` for the cluster. You can take the file `etc/feelpprc.d/template.sh` as an example. A config file contains all path to your software local installs.
