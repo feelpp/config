@@ -9,7 +9,8 @@
 
 module purge
 
-currentdir=${BASH_SOURCE[0]%/*}
+#currentdir=${BASH_SOURCE[0]%/*}
+currentdir=`pwd`
 confdir=$currentdir/feelpprc.d
 hpcnamefile=$currentdir/hpcname
 
