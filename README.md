@@ -18,13 +18,13 @@ profiles for each compiler. This is based on modules
 For the user point of view, to load the Feel++ environment, with the new method:
 
 - First, users have to add this line in their .bashrc (or compatible sh shell)  
- ```
-# The cd commands are important, we use the current working directory for sourcing files
-# FEELPP_DIR is the directory where the config and custom built packages are stored
-cd $FEELPP_DIR/etc
-source feelpprc.sh
-cd -
 ```
+# The cd commands are important, we use the current working directory for sourcing files   
+# FEELPP_DIR is the directory where the config and custom built packages are stored   
+cd $FEELPP_DIR/etc   
+source feelpprc.sh   
+cd -   
+``` 
 - Now, the new module should appears in the available modules list (in two
   categories at the end), ``` module avail ```
 - There are several profiles available which are typically just a set of
