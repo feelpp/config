@@ -41,6 +41,7 @@ export FEELPP_PETSC351_PATH=$FEELPP_SHARE_PATH/install/with-gcc-4.8.1/with-openm
 export FEELPP_SLEPC342_GCC_PATH=$FEELPP_SHARE_PATH/slepc/3.4.2
 export FEELPP_SLEPC350_GCC_PATH=$FEELPP_SHARE_PATH/slepc/3.5.0
 export FEELPP_SLEPC351_GCC_PATH=$FEELPP_SHARE_PATH/install/with-gcc-4.8.1/with-openmpi-1.8.3/slepc-3.5.1
+export FEELPP_HDF51813_GCC_PATH=$FEELPP_SHARE_PATH/install/with-gcc-4.8.1/with-openmpi-1.8.3/hdf5-1.8.13
 
 # Mpi
 export FEELPP_OPENMPI163_AUTOCC_PATH=$FEELPP_SHARE_PATH/openmpi/1.6.3

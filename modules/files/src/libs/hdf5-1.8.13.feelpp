@@ -1,0 +1,25 @@
+#%Module1.0################
+## 
+## hdf5 module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+set hdf5path $::env(FEELPP_HDF51813_GCC_PATH)
+
+set libpath $hdf5path/lib
+set binpath $hdf5path/bin
+set includepath $hdf5path/include
+
+if [module-info mode load]  {
+	prepend-path PATH $binpath
+	prepend-path LD_LIBRARY_PATH $libpath
+	setenv SLEPC_DIR $hdf5path
+}
+
+if [module-info mode remove] {
+
+	remove-path PATH $binpath
+	remove-path LD_LIBRARY_PATH $libpath
+	unsetenv SLEPC_DIR $hdf5path
+
+}
