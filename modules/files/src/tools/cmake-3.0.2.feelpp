@@ -1,0 +1,15 @@
+#%Module1.0################
+set cmakepath $::env(FEELPP_CMAKE302_GCC_PATH)
+
+set cmakebinpath $cmakepath/bin
+#set cmakelibpath $cmakepath/lib
+
+if [module-info mode load]  {
+	prepend-path PATH $cmakebinpath
+#	prepend-path LD_LIBRARY_PATH $cmakelibpath
+}
+
+if [module-info mode remove] {
+    remove-path PATH $cmakebinpath
+#   remove-path LD_LIBRARY_PATH $cmakelibpath
+}

@@ -13,13 +13,12 @@ set includepath $hdf5path/include
 if [module-info mode load]  {
 	prepend-path PATH $binpath
 	prepend-path LD_LIBRARY_PATH $libpath
-	setenv SLEPC_DIR $hdf5path
+	setenv HDF5_ROOT $hdf5path
 }
 
 if [module-info mode remove] {
 
 	remove-path PATH $binpath
 	remove-path LD_LIBRARY_PATH $libpath
-	unsetenv SLEPC_DIR $hdf5path
-
+	unsetenv HDF5_ROOT $hdf5path
 }
