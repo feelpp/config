@@ -56,6 +56,9 @@ export FEELPP_GMSH261_GCC_PATH=$FEELPP_SHARE_PATH/gmsh/2.6.1
 export FEELPP_GMSH282_GCC_PATH=$FEELPP_SHARE_PATH/gmsh/2.8.2
 export FEELPP_GMSH285_GCC_PATH=$FEELPP_SHARE_PATH/install/with-gcc-4.8.1/with-openmpi-1.8.3/gmsh-2.8.5
 
+# Tools
+export FEELPP_PARAVIEW420_GCC_PATH=$FEELPP_SHARE_PATH/install/with-gcc-4.8.1/with-openmpi-1.8.3/ParaView-v4.2.0
+
 #------------------------------------------------------------------------------
 # CUSTOM COMMANDS
 #------------------------------------------------------------------------------
