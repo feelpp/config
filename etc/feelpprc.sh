@@ -9,23 +9,17 @@
 
 module purge
 
-#currentdir=${BASH_SOURCE[0]%/*}
-currentdir=`pwd`
-confdir=$currentdir/feelpprc.d
-hpcnamefile=$currentdir/hpcname
+currentpath="$( cd "$(dirname "$0")" ; pwd -P )"
 
-# set the module apth relatively to the current directory (so the config is also available for user clones)
-export FEELPP_MODULE_PATH="$currentdir/../modules"
-
-if [ -f $hpcnamefile ]
+if [ -f $envfile ]
 then
-		# get the value of HPCNAME
-		source $hpcnamefile
-		export FEELPP_HPCNAME=${HPCNAME}
-		# source the corresponding configuration
-    source "$confdir/$HPCNAME.sh"
+    # Export all environement variables
+    set -a
+    . $currentpath/environment
+    # source the corresponding configuration
+    . $currentpath/feelpprc.d/$FEELPP_HPCNAME.sh
+    set +a
 else
-    echo "-- HPCNAME variable not found!
-=> Feel++ modules might not be configured correctly.
+    echo "=> Feel++ modules are not be configured correctly.
 => Please contact an administrator"
 fi
