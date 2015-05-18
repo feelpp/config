@@ -4,13 +4,9 @@ import curses
 from curses import panel
 import os
 import socket
+import shutil
 
-Settings=dict(
-FEELPP_HPCNAME="",
-FEELPP_CONFIG_PATH="",
-FEELPP_MODULE_PATH="",
-FEELPP_SHARE_PATH=""
-)
+Settings=dict()
 
 class MenuItem(object):
     def __init__(self, description, function):
@@ -91,7 +87,8 @@ class MenuItemUpdateDictEntry(object):
         pnl.show()
         window.clear()
 
-        buf = ""
+        # Set the default value to the previous HPCNAME
+        buf = self.dct[self.key]
         while True:
             window.clear()
             #window.refresh()
@@ -119,6 +116,43 @@ class MenuItemUpdateDictEntry(object):
         if(buf != ""):
             self.dct[self.key] = buf
 
+class Module(object):
+    def __init__(self, rootPath, relativePath, state):
+        self.rootPath = rootPath
+        self.relativePath = relativePath
+        self.state = state
+
+        self.installPath = ""
+
+        self.envName = self.buildEnvName()
+
+    # build the name of the associated environment variable
+    def buildEnvName(self):
+        root, ext = os.path.splitext(os.path.basename(os.path.join(self.rootPath, self.relativePath)))
+        self.envName = "FEELPP_" + root.upper().translate(None, ".-") + "_PATH"
+
+    def getEnvName(self):
+        self.buildEnvName()
+        return self.envName
+
+    def getState(self):
+        return self.state
+
+    def setState(self, state):
+        self.state = state
+
+    def setInstallPath(self, path):
+        self.installPath = path
+
+    def getRootPath(self):
+        return self.rootPath
+
+    def getRelativePath(self):
+        return self.relativePath
+
+    def getInstallPath(self):
+        return self.installPath
+
 class MenuItemModuleList(object):
     def __init__(self, desc, dct, key, stdscreen):
         self.desc = desc
@@ -139,14 +173,14 @@ class MenuItemModuleList(object):
         self.moduleList = []
         self.activeModuleList = []
 
-        self.buildModuleList(os.path.join(self.dct[self.key], "files", "src"), 0)
-        self.buildActiveModuleList(os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"]), 0)
+        path = os.path.join(self.dct[self.key], "files", "src")
+        self.buildModuleList(path, "", 0)
 
-        # Remove base working directory form module name
-        for i in range(len(self.moduleList)):
-            self.moduleList[i] = self.moduleList[i].replace(os.path.join(self.dct[self.key], "files", "src") + "/", "")
-        for i in range(len(self.activeModuleList)):
-            self.activeModuleList[i] = self.activeModuleList[i].replace(os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"]) + "/", "")
+        path = os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"])
+        # Check if we already activated some modules for this computer
+        # before trying to build a module list
+        if(os.path.exists(path)):
+            self.updateModuleState(path, "")
 
     def getDescription(self):
         return self.desc + ": " + self.dct[self.key]
@@ -154,44 +188,33 @@ class MenuItemModuleList(object):
     def getFunction(self):
         return self.update
 
-    """
-    def buildModuleList(self):
-        print self.dct[self.key]
-        for root, dirs, files in os.walk(self.dct[self.key]):
-            print root, dirs, files
-    """
-
-    def buildModuleList(self, root, level):
+    def buildModuleList(self, root, currentDir, level):
         if(level == 0):
             self.moduleList = []
 
-        basedir = root
-        #print("Files in ", os.path.abspath(root), ": ")
         subdirlist = []
-        for item in os.listdir(root):
-            if os.path.isfile(os.path.join(basedir, item)):
-                self.moduleList.append(os.path.join(basedir, item))
+        for item in os.listdir(os.path.join(root, currentDir)):
+            if os.path.isfile(os.path.join(root, currentDir, item)):
+                self.moduleList.append(Module(root, os.path.join(currentDir, item), False))
             else:
-                subdirlist.append(os.path.join(basedir, item))
+                subdirlist.append(os.path.join(currentDir, item))
 
         for subdir in subdirlist:
-            self.buildModuleList(subdir, 1)
+            self.buildModuleList(root, subdir, 1)
 
-    def buildActiveModuleList(self, root, level):
-        if(level == 0):
-            self.activeModuleList = []
+    def updateModuleState(self, root, currentDir):
 
-        basedir = root
-        #print("Files in ", os.path.abspath(root), ": ")
         subdirlist = []
-        for item in os.listdir(root):
-            if os.path.isfile(os.path.join(basedir, item)):
-                self.activeModuleList.append(os.path.join(basedir, item))
+        for item in os.listdir(os.path.join(root, currentDir)):
+            if os.path.isfile(os.path.join(root, currentDir, item)):
+                for m in self.moduleList:
+                    if m.getRelativePath() == os.path.join(currentDir, item):
+                        m.state = True
             else:
-                subdirlist.append(os.path.join(basedir, item))
+                subdirlist.append(os.path.join(currentDir, item))
 
         for subdir in subdirlist:
-            self.buildActiveModuleList(subdir, 1)
+            self.updateModuleState(root, subdir)
 
     def navigate(self, n):
         self.position += n
@@ -209,14 +232,15 @@ class MenuItemModuleList(object):
         #    self.position = len(self.moduleList)-1
 
     def update(self):
-        self.buildModuleList(os.path.join(self.dct[self.key], "files", "src"), 0)
-        self.buildActiveModuleList(os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"]), 0)
+        self.moduleList = []
+        path = os.path.join(self.dct[self.key], "files", "src")
+        self.buildModuleList(path, "", 0)
 
-        # Remove base working directory form module name
-        for i in range(len(self.moduleList)):
-            self.moduleList[i] = self.moduleList[i].replace(os.path.join(self.dct[self.key], "files", "src") + "/", "")
-        for i in range(len(self.activeModuleList)):
-            self.activeModuleList[i] = self.activeModuleList[i].replace(os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"]) + "/", "")
+        path = os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"])
+        # Check if we already activated some modules for this computer
+        # before trying to build a module list
+        if(os.path.exists(path)):
+            self.updateModuleState(path, "")
 
         self.panel.top()
         self.panel.show()
@@ -237,29 +261,30 @@ class MenuItemModuleList(object):
                 else:
                     mode = curses.A_NORMAL
 
-                if(self.moduleList[index + self.windowStart] in self.activeModuleList):
-                    msg = '\t%d. [*] %s' % (index + self.windowStart, self.moduleList[index + self.windowStart])
+                if(self.moduleList[index + self.windowStart].getState()):
+                    msg = '\t%d. [*] %s %s' % (index + self.windowStart, self.moduleList[index + self.windowStart].getRelativePath(), self.moduleList[index + self.windowStart].getRootPath())
                 else:
-                    msg = '\t%d. [ ] %s' % (index + self.windowStart, self.moduleList[index + self.windowStart])
+                    msg = '\t%d. [ ] %s %s' % (index + self.windowStart, self.moduleList[index + self.windowStart].getRelativePath(), self.moduleList[index + self.windowStart].getRootPath())
                 self.window.addstr(lpos, 1, msg, mode)
                 lpos = lpos + 1
 
             key = self.window.getch()
 
             if key in [curses.KEY_ENTER, ord('\n')]:
-                #print(os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"], self.moduleList[self.position + self.windowStart]))
-                if(self.moduleList[self.position + self.windowStart] in self.activeModuleList):
-                    os.remove(os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"], self.moduleList[self.position + self.windowStart]))
-                    self.activeModuleList.remove(self.moduleList[self.position + self.windowStart])
+                if(self.moduleList[self.position + self.windowStart].getState()):
+                    os.remove(os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"], self.moduleList[self.position + self.windowStart].getRelativePath()))
+                    self.moduleList[self.position + self.windowStart].setState(False)
                 else:
-                    modpath=os.path.dirname(os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"], self.moduleList[self.position + self.windowStart]))
+                    modpath=os.path.dirname(os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"], self.moduleList[self.position + self.windowStart].getRelativePath()))
                     if(not os.path.exists(modpath)):
                         os.makedirs(modpath)
-                    os.symlink(
-                    os.path.join(self.dct[self.key], "files", "src", self.moduleList[self.position + self.windowStart]),
-                    os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"], self.moduleList[self.position + self.windowStart])
-                    )
-                    self.activeModuleList.append(self.moduleList[self.position + self.windowStart])
+                    modpath=os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"], self.moduleList[self.position + self.windowStart].getRelativePath())
+                    if(not os.path.exists(modpath)):
+                        os.symlink(
+                        os.path.join(self.dct[self.key], "files", "src", self.moduleList[self.position + self.windowStart].getRelativePath()),
+                        os.path.join(modpath)
+                        )
+                    self.moduleList[self.position + self.windowStart].setState(True)
 
             # When the user press escape, leave the loop
             elif key == 27:
@@ -274,6 +299,8 @@ class MenuItemModuleList(object):
         self.panel.hide()
         panel.update_panels()
         curses.doupdate()
+
+        writeActiveModuleList(self.moduleList)
 
 class Menu(object):
 
@@ -338,35 +365,59 @@ class Menu(object):
         panel.update_panels()
         curses.doupdate()
 
-def writeActiveModuleList(activeModuleList):
+
+# Parse a file with the following format:
+# entry=value
+# ...
+# and put its content in a dictionary
+def parseConfigFile(filename, outDict):
+
+    # Open the filename
+    f = open(filename, "r")
+    lines = f.readlines()
+    for line in lines:
+        # if line start with a #, it is a comment
+        if(not line.lstrip().startswith("#")):
+            # clean up the line
+            tl = line.lstrip().translate(None, "\n")
+            # if the line is not empty, split it
+            if(tl != ""):
+                spl = tl.split("=")
+                outDict[spl[0]] = spl[1]
+    f.close()
+
+def writeActiveModuleList(moduleList):
 
     log = open("log", "w")
 
     modfile=os.path.join(Settings["FEELPP_CONFIG_PATH"], "etc", "feelpprc.d", Settings["FEELPP_HPCNAME"] + ".sh")
+    log.write(modfile)
 
-    # open and close the file
-    # in case it doesn't exist
-    f = open(modfile, "a")
-    f.close()
+    prevModules = dict()
+    if(os.path.exists(modfile)):
+        parseConfigFile(modfile, prevModules)
+    log.write("PREVMODULES=" + str(prevModules) + "\n\n")
 
-    f = open(modfile, "r")
-    lines = f.readlines()
-    log.write(str(lines))
-    log.write("\n\n")
+    modfile=os.path.join(Settings["FEELPP_CONFIG_PATH"], "etc", "feelpprc.d", Settings["FEELPP_HPCNAME"] + ".sh")
+    f = open(modfile, "w")
 
-    content = []
-    for l in lines:
-        if(not l.lstrip().startswith("#") and l.lstrip().translate(None, "\n") != ""):
-            content.append(l.lstrip().translate(None, "\n"))
-    log.write(str(content))
-    log.write("\n\n")
-
-    log.write(str(activeModuleList))
-    log.write("\n\n")
-
-    for m in activeModuleList:
-        root, ext = os.path.splitext(os.path.basename(m))
-        log.write("FEELPP_" + root.upper().translate(None, ".-") + "_PATH=" + Settings["FEELPP_SHARE_PATH"] + "\n")
+    for m in moduleList:
+        # if the current module was previously in the file
+        if(m.getEnvName() in prevModules):
+            # and if it is still active
+            # we keep the previous configuration
+            if(m.getState()):
+                f.write(m.getEnvName() + "=" + prevModules[m.getEnvName()] + "\n")
+                log.write("Keeping old configuration for " + m.getEnvName() + "\n")
+            # otherwise the module is silently deleted from the file
+            else:
+                log.write("Deleting previous entry for " + m.getEnvName() + "\n")
+        # if the module was not previously active
+        else:
+            # and it is now active, then we set it up in the file
+            if(m.getState()):
+                f.write(m.getEnvName() + "=" + Settings["FEELPP_SHARE_PATH"] + "\n")
+                log.write("using new configuration for " + m.getEnvName() + "\n")
 
 class MyApp(object):
 
@@ -374,32 +425,45 @@ class MyApp(object):
         self.screen = stdscreen
         curses.curs_set(0)
 
-        #d = DialogYesNo()
-        #d.ask("Test", stdscreen)
-
+        # Menu for setting name of the cluster and path to installed applications
         hpcMenuItems = [
         MenuItemUpdateDictEntry("Cluster name", Settings, "FEELPP_HPCNAME", self.screen),
         MenuItemUpdateDictEntry("Path to installed software", Settings, "FEELPP_SHARE_PATH", self.screen),
         ]
         hpcMenu = Menu("HPC Name", hpcMenuItems, self.screen)
 
+        # Main menu
         mainMenuItems = [
+        # Cluster info submenu
         MenuItem('HPC Name', hpcMenu.display),
+        # Configure list of module used
         MenuItemModuleList("List of Modules", Settings, "FEELPP_MODULE_PATH", self.screen),
         ]
         mainMenu = Menu("Module configuration", mainMenuItems, self.screen)
         mainMenu.display()
 
-        writeActiveModuleList(mainMenuItems[1].activeModuleList)
-
 if __name__ == '__main__':
-    Settings["FEELPP_HPCNAME"] = socket.gethostname()
-    Settings["FEELPP_CONFIG_PATH"] = os.path.dirname(os.path.realpath(__file__))
-    Settings["FEELPP_MODULE_PATH"] = Settings["FEELPP_CONFIG_PATH"] + "/modules"
-    Settings["FEELPP_SHARE_PATH"] = "/usr/local/feelpp"
+    # read back previous module configuration
+    # if the file exists
+    prevConfFile = os.path.join(os.path.dirname(os.path.realpath(__file__)), "etc", "environment")
+    if(os.path.exists(prevConfFile)):
+        parseConfigFile(prevConfFile, Settings)
 
+    # Check if we have at least several mandatory variables from the environment file
+    # otherwise we add them
+    if(not("FEELPP_HPCNAME" in Settings)):
+        Settings["FEELPP_HPCNAME"] = socket.gethostname()
+    if(not("FEELPP_CONFIG_PATH" in Settings)):
+        Settings["FEELPP_CONFIG_PATH"] = os.path.dirname(os.path.realpath(__file__))
+    if(not("FEELPP_MODULE_PATH" in Settings)):
+        Settings["FEELPP_MODULE_PATH"] = Settings["FEELPP_CONFIG_PATH"] + "/modules"
+    if(not("FEELPP_SHARE_PATH" in Settings)):
+        Settings["FEELPP_SHARE_PATH"] = "/usr/local/feelpp"
+
+    # Launch the curses interface
     curses.wrapper(MyApp)
 
+    # output configuration into etc/environment
     f = open(os.path.join(Settings["FEELPP_CONFIG_PATH"], "etc", "environment"), "w")
 
     for k, v in iter(Settings.items()):
