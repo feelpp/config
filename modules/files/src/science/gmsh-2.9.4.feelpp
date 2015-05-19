@@ -5,7 +5,7 @@ set gmshbinpath $gmshpath/bin
 set gmshlibpath $gmshpath/lib
 
 if [module-info mode load]  {
-	append-path PATH $gmshbinpath
+	prepend-path PATH $gmshbinpath
 	prepend-path GMSH_DIR $gmshpath
 	prepend-path LD_LIBRARY_PATH $gmshlibpath
 }
