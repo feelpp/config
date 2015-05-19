@@ -1,25 +1,36 @@
 ################################################################################
-# Author(s): Guillaume Dollé <gdolle@math.unistra.fr>
-#
-# NOTE :
-#   Just source this file. You can type in your favorite shell
-#   `echo "source /path/to/feelpprc.sh" >> ~/.bashrc`
-#
+#  System-wide configuration script.
+#  Just source this file in your favorite shell.
 ################################################################################
+
+trap "" 1 2 3
 
 module purge
 
-currentpath="$( cd "$(dirname "$0")" ; pwd -P )"
+errmsg1='Error: custom modules are not configured correctly.'
+errmsg2='Error: Shell unsupported for custom modules.'
+errmsg3='Please contact your administrator!'
 
-if [ -f $envfile ]
-then
-    # Export all environement variables
-    set -a
-    . $currentpath/environment
-    # source the corresponding configuration
-    . $currentpath/feelpprc.d/$FEELPP_HPCNAME.sh
-    set +a
-else
-    echo "=> Feel++ modules are not be configured correctly.
-=> Please contact an administrator"
+shname=`ps -o comm= -p $$`;
+case $shname in
+    bash) scriptpath=`dirname "${BASH_SOURCE[0]}"`;;
+    ksh)  scriptpath=`dirname "${.sh.file}"`;; # >= ksh93
+    zsh)  scriptpath=`dirname "$0"`;;
+    sh) echo $errmsg2 $errmsg3;;
+    *)  echo $errmsg2 $errmsg3;;  # default for scripts
+esac
+
+if [ ! -z $scriptpath ]; then
+    if [ -f $envfile ]; then
+        # Export all environement variables
+        set -a
+        . $scriptpath/environment
+        # source the corresponding configuration
+        . $scriptpath/feelpprc.d/$FEELPP_HPCNAME.sh
+        set +a
+    else
+        echo "$errmsg1 $errmsg3"
+    fi
 fi
+
+trap - 1 2 3
