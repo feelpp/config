@@ -463,6 +463,10 @@ if __name__ == '__main__':
     # Launch the curses interface
     curses.wrapper(MyApp)
 
+    # Set the module path after having using the app
+    # To ensure that we get the correct HPCNAME
+    Settings["MODULEPATH"] = os.path.join(Settings["FEELPP_MODULE_PATH"], "files", Settings["FEELPP_HPCNAME"]) + ":$MODULEPATH"
+
     # output configuration into etc/environment
     f = open(os.path.join(Settings["FEELPP_CONFIG_PATH"], "etc", "environment"), "w")
 
