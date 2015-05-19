@@ -17,12 +17,14 @@ set mpilibpath $mpipath/lib
 set mpimanpath $mpipath/share/man
 
 if [module-info mode load]  {
-	append-path PATH $mpibinpath
+    prepend-path CMAKE_PREFIX_PATH $mpipath
+	prepend-path PATH $mpibinpath
 	prepend-path LD_LIBRARY_PATH $mpilibpath
 	prepend-path MANPATH $mpimanpath
 }
 
 if [module-info mode remove] {
+    remove-path CMAKE_PREFIX_PATH $mpipath
 	remove-path PATH $mpibinpath
 	remove-path LD_LIBRARY_PATH $mpilibpath
 	remove-path MANPATH $mpimanpath

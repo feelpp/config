@@ -11,12 +11,14 @@ set binpath $petscpath/bin
 set includepath $petscpath/include
 
 if [module-info mode load]  {
-	append-path PATH $binpath
+    prepend-path CMAKE_PREFIX_PATH $petscpath
+	prepend-path PATH $binpath
 	prepend-path LD_LIBRARY_PATH $libpath
 	prepend-path PETSC_DIR $petscpath
 }
 
 if [module-info mode remove] {
+    remove-path CMAKE_PREFIX_PATH $petscpath
 	remove-path PATH $binpath
 	remove-path LD_LIBRARY_PATH $libpath
 	remove-path PETSC_DIR $petscpath
