@@ -4,7 +4,7 @@
 ## Stdout dout contenir des commandes qui seront evaluees par le shell
 #
 #
-set slepcpath $::env(FEELPP_SLEPC353_GCC_PATH)
+set slepcpath $::env(FEELPP_SLEPC353_PATH)
 
 # won't be needed : only static libraries
 set libpath $slepcpath/lib

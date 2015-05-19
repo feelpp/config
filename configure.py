@@ -171,7 +171,6 @@ class MenuItemModuleList(object):
         self.position = 0
 
         self.moduleList = []
-        self.activeModuleList = []
 
         path = os.path.join(self.dct[self.key], "files", "src")
         self.buildModuleList(path, "", 0)
@@ -466,6 +465,9 @@ if __name__ == '__main__':
     # Set the module path after having using the app
     # To ensure that we get the correct HPCNAME
     Settings["MODULEPATH"] = os.path.join(Settings["FEELPP_MODULE_PATH"], "files", Settings["FEELPP_HPCNAME"]) + ":$MODULEPATH"
+    path = os.path.join(Settings["FEELPP_MODULE_PATH"], "profiles", Settings["FEELPP_HPCNAME"])
+    if(os.path.exists(path)):
+        Settings["MODULEPATH"] = path + ":" + Settings["MODULEPATH"]
 
     # output configuration into etc/environment
     f = open(os.path.join(Settings["FEELPP_CONFIG_PATH"], "etc", "environment"), "w")

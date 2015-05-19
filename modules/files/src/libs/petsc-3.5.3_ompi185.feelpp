@@ -4,7 +4,7 @@
 ## Stdout dout contenir des commandes qui seront evaluees par le shell
 #
 #
-set petscpath $::env(FEELPP_PETSC353_PATH)
+set petscpath $::env(FEELPP_PETSC353_OMPI185_PATH)
 
 set libpath $petscpath/lib
 set binpath $petscpath/bin
