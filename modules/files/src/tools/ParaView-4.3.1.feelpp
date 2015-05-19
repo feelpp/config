@@ -1,0 +1,18 @@
+#%Module1.0################
+## 
+## Paraview module
+##
+#
+#
+
+set paraviewpath $::env(FEELPP_PARAVIEW431_PATH)
+
+if [module-info mode load]  {
+	prepend-path PATH $paraviewpath/bin
+	prepend-path LD_LIBRARY_PATH $paraviewpath/lib
+}
+
+if [module-info mode remove] {
+	remove-path PATH $paraviewpath/bin
+	remove-path LD_LIBRARY_PATH $paraviewpath/bin
+}
