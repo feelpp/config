@@ -7,11 +7,12 @@ trap "" 1 2 3
 
 module purge
 
+shname=`ps -o comm= -p $$`;
+
 errmsg1='Error: custom modules are not configured correctly.'
-errmsg2='Error: Shell unsupported for custom modules.'
+errmsg2="Error: Shell (${shname}) unsupported for custom modules."
 errmsg3='Please contact your administrator!'
 
-shname=`ps -o comm= -p $$`;
 case $shname in
     bash) scriptpath=`dirname "${BASH_SOURCE[0]}"`;;
     ksh)  scriptpath=`dirname "${.sh.file}"`;; # >= ksh93
