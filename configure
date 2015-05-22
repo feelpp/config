@@ -5,8 +5,38 @@ from curses import panel, ascii
 import os
 import socket
 import shutil
+import argparse
+import logging
 
 Settings=dict()
+LEVELS=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
+
+# Add log level options.
+parser = argparse.ArgumentParser(description='Modules config options:')
+parser.add_argument("-v", "--vlog",
+                    dest="verboseLogLevel",
+                    choices=LEVELS,
+                    help="verbose with logging level")
+parser.add_argument("-l", "--log",
+                    dest="fileLogLevel",
+                    action="store_true",
+                    help="export log into a file")
+args = parser.parse_args()
+
+# Use vlog to print message with prefix level.
+vlog = logging.getLogger("vlog")
+if( args.verboseLogLevel ):
+    vlog.setLevel(getattr(logging, args.verboseLogLevel))
+    vlog.addHandler( logging.StreamHandler() )
+
+# Use log to write log message with prefix level.
+log = logging.getLogger("log")
+if( args.fileLogLevel ):
+    formatter=logging.Formatter('%(levelname)8s: line %(lineno)s: %(message)s')
+    fileHandler=logging.FileHandler('configure.log', mode='w')
+    fileHandler.setFormatter(formatter)
+    log.setLevel('DEBUG')
+    log.addHandler( fileHandler )
 
 class MenuItem(object):
     def __init__(self, description, function):
@@ -60,7 +90,6 @@ class DialogYesNo(object):
                 panel.update_panels()
                 curses.doupdate()
                 return bVal;
-
 
 class MenuItemUpdateDictEntry(object):
     def __init__(self, desc, dct, key, stdscreen):
@@ -214,7 +243,6 @@ class MenuItemModuleList(object):
             self.buildModuleList(root, subdir, 1)
 
     def updateModuleState(self, root, currentDir):
-
         subdirlist = []
         for item in os.listdir(os.path.join(root, currentDir)):
             if os.path.isfile(os.path.join(root, currentDir, item)):
@@ -246,6 +274,8 @@ class MenuItemModuleList(object):
         self.moduleList = []
         path = os.path.join(self.dct[self.key], "files", "src")
         self.buildModuleList(path, "", 0)
+        # Remember default
+        moduleListInit=list(self.moduleList)
 
         path = os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"])
         # Check if we already activated some modules for this computer
@@ -257,16 +287,13 @@ class MenuItemModuleList(object):
         self.panel.show()
         self.window.clear()
 
-        # Remember default
-        moduleListInit=self.moduleList[:]
-
         while True:
             self.window.clear()
             #self.window.refresh()
             curses.doupdate()
 
             lpos = 1
-            self.window.addstr(lpos, 1, "Module list (Enter to select, Esc to validate changes and quit this menu)", curses.A_NORMAL)
+            self.window.addstr(lpos, 1, "Module list (Space to select, Enter to validate changes, Escape to cancel)", curses.A_NORMAL)
             lpos = lpos + 1
 
             for index in range(min(len(self.moduleList), (curses.LINES - 5) + 1)):#len(self.moduleList)):
@@ -289,11 +316,10 @@ class MenuItemModuleList(object):
                     self.moduleList[self.position + self.windowStart].setState(False)
                 else:
                     self.moduleList[self.position + self.windowStart].setState(True)
-
             # When the user press escape, leave the loop
             elif key == curses.ascii.ESC:
-                # TODO Cancel modifications
-                self.moduleList=moduleListInit
+                # TODO Bug Cancel modifications.
+                self.moduleList=list(moduleListInit)
                 break
             elif key == ord('\n'):
                 # Valid modifications.
@@ -398,15 +424,13 @@ def parseConfigFile(filename, outDict):
 
 def writeActiveModuleList(moduleList):
 
-    log = open("log", "w")
-
     modfile=os.path.join(Settings["FEELPP_CONFIG_PATH"], "etc", "feelpprc.d", Settings["FEELPP_HPCNAME"] + ".sh")
-    log.write(modfile)
+    log.info(modfile)
 
     prevModules = dict()
     if(os.path.exists(modfile)):
         parseConfigFile(modfile, prevModules)
-    log.write("PREVMODULES=" + str(prevModules) + "\n\n")
+    log.info("PREVMODULES=" + str(prevModules) + "\n\n")
 
     modfile=os.path.join(Settings["FEELPP_CONFIG_PATH"], "etc", "feelpprc.d", Settings["FEELPP_HPCNAME"] + ".sh")
     f = open(modfile, "w")
@@ -434,16 +458,16 @@ def writeActiveModuleList(moduleList):
             # we keep the previous configuration
             if(m.getState()):
                 f.write(m.getEnvName() + "=" + prevModules[m.getEnvName()] + "\n")
-                log.write("Keeping old configuration for " + m.getEnvName() + "\n")
+                log.debug("Keeping old configuration for " + m.getEnvName() + "\n")
             # otherwise the module is silently deleted from the file
             else:
-                log.write("Deleting previous entry for " + m.getEnvName() + "\n")
+                log.debug("Deleting previous entry for " + m.getEnvName() + "\n")
         # if the module was not previously active
         else:
             # and it is now active, then we set it up in the file
             if(m.getState()):
                 f.write(m.getEnvName() + "=" + Settings["FEELPP_SHARE_PATH"] + "\n")
-                log.write("using new configuration for " + m.getEnvName() + "\n")
+                log.debug("using new configuration for " + m.getEnvName() + "\n")
 
 def removeNotActiveModuleList(moduleList):
     for m in moduleList:
@@ -515,3 +539,4 @@ if __name__ == '__main__':
         f.write(k + "=" + v + "\n")
     f.close()
 
+# vim:set tw=80 sw=4 sts=4 et foldmethod=indent foldlevel=0 foldnestmax=2:
