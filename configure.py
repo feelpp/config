@@ -89,6 +89,7 @@ class MenuItemUpdateDictEntry(object):
 
         # Set the default value to the previous HPCNAME
         buf = self.dct[self.key]
+        bufinit = buf
         while True:
             window.clear()
             #window.refresh()
@@ -104,6 +105,9 @@ class MenuItemUpdateDictEntry(object):
             if key in [curses.ascii.BS,curses.KEY_DC,curses.KEY_BACKSPACE]:
                 buf = buf[:len(buf)-1]
             elif key in [curses.KEY_ENTER, ord('\n')]:
+                break;
+            elif key in [curses.ascii.ESC, ord('\n')]:
+                buf=bufinit
                 break;
             elif curses.ascii.isgraph(key):
                 buf = buf + chr(key)
@@ -253,6 +257,9 @@ class MenuItemModuleList(object):
         self.panel.show()
         self.window.clear()
 
+        # Remember default
+        moduleListInit=self.moduleList[:]
+
         while True:
             self.window.clear()
             #self.window.refresh()
@@ -277,24 +284,19 @@ class MenuItemModuleList(object):
 
             key = self.window.getch()
 
-            if key in [curses.ascii.SP, ord('\n')]:
+            if key in [curses.ascii.SP]:
                 if(self.moduleList[self.position + self.windowStart].getState()):
-                    os.remove(os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"], self.moduleList[self.position + self.windowStart].getRelativePath()))
                     self.moduleList[self.position + self.windowStart].setState(False)
                 else:
-                    modpath=os.path.dirname(os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"], self.moduleList[self.position + self.windowStart].getRelativePath()))
-                    if(not os.path.exists(modpath)):
-                        os.makedirs(modpath)
-                    modpath=os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"], self.moduleList[self.position + self.windowStart].getRelativePath())
-                    if(not os.path.exists(modpath)):
-                        os.symlink(
-                        os.path.join(self.dct[self.key], "files", "src", self.moduleList[self.position + self.windowStart].getRelativePath()),
-                        os.path.join(modpath)
-                        )
                     self.moduleList[self.position + self.windowStart].setState(True)
 
             # When the user press escape, leave the loop
-            elif key == 27:
+            elif key == curses.ascii.ESC:
+                # TODO Cancel modifications
+                self.moduleList=moduleListInit
+                break
+            elif key == ord('\n'):
+                # Valid modifications.
                 break
             elif key == curses.KEY_UP:
                 self.navigate(-1)
@@ -307,6 +309,7 @@ class MenuItemModuleList(object):
         panel.update_panels()
         curses.doupdate()
 
+        removeNotActiveModuleList(self.moduleList)
         writeActiveModuleList(self.moduleList)
 
 class Menu(object):
@@ -408,6 +411,22 @@ def writeActiveModuleList(moduleList):
     modfile=os.path.join(Settings["FEELPP_CONFIG_PATH"], "etc", "feelpprc.d", Settings["FEELPP_HPCNAME"] + ".sh")
     f = open(modfile, "w")
 
+    # Create directories and symlinks
+    for m in moduleList:
+        if(m.getState()):
+            modpath=os.path.dirname( os.path.join( Settings["FEELPP_MODULE_PATH"],"files",
+                                                   Settings["FEELPP_HPCNAME"],
+                                                   m.getRelativePath() ) )
+            if(not os.path.exists(modpath)):
+                os.makedirs(modpath)
+            modpath=os.path.join( Settings["FEELPP_MODULE_PATH"], "files", Settings["FEELPP_HPCNAME"], m.getRelativePath())
+            if(not os.path.exists(modpath)):
+                os.symlink(
+                os.path.join( Settings["FEELPP_MODULE_PATH"], "files", "src", m.getRelativePath()),
+                os.path.join(modpath)
+                )
+
+    # Create cache.
     for m in moduleList:
         # if the current module was previously in the file
         if(m.getEnvName() in prevModules):
@@ -425,6 +444,18 @@ def writeActiveModuleList(moduleList):
             if(m.getState()):
                 f.write(m.getEnvName() + "=" + Settings["FEELPP_SHARE_PATH"] + "\n")
                 log.write("using new configuration for " + m.getEnvName() + "\n")
+
+def removeNotActiveModuleList(moduleList):
+    for m in moduleList:
+        if(not m.getState()):
+            modpath=os.path.join( Settings["FEELPP_MODULE_PATH"], "files",
+                                  Settings["FEELPP_HPCNAME"], m.getRelativePath())
+            moddir=os.path.dirname( modpath )
+            if( os.path.exists(modpath) ):
+                os.remove( modpath )
+                # Remove empty directory.
+                if( os.listdir( moddir ) == [] ):
+                    os.rmdir( moddir )
 
 class MyApp(object):
 
