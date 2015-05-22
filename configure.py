@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import curses
-from curses import panel
+from curses import panel, ascii
 import os
 import socket
 import shutil
@@ -101,11 +101,11 @@ class MenuItemUpdateDictEntry(object):
 
             key = window.getch()
 
-            if key in [curses.KEY_BACKSPACE]:
+            if key in [curses.ascii.BS,curses.KEY_DC,curses.KEY_BACKSPACE]:
                 buf = buf[:len(buf)-1]
             elif key in [curses.KEY_ENTER, ord('\n')]:
                 break;
-            else:
+            elif curses.ascii.isalnum(key):
                 buf = buf + chr(key)
 
         window.clear()
@@ -277,7 +277,7 @@ class MenuItemModuleList(object):
 
             key = self.window.getch()
 
-            if key in [curses.KEY_ENTER, ord('\n')]:
+            if key in [curses.ascii.SP, ord('\n')]:
                 if(self.moduleList[self.position + self.windowStart].getState()):
                     os.remove(os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"], self.moduleList[self.position + self.windowStart].getRelativePath()))
                     self.moduleList[self.position + self.windowStart].setState(False)
