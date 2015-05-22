@@ -30,8 +30,6 @@ if [ ! -z $scriptpath ]; then
         # source the corresponding configuration
         . $scriptpath/feelpprc.d/$FEELPP_HPCNAME.sh
         set +a
-        echo ${scriptpath}
-        echo $scriptpath/feelpprc.d/$FEELPP_HPCNAME.sh
     else
         echo "$errmsg1 $errmsg3"
     fi

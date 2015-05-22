@@ -194,7 +194,15 @@ class MenuItemModuleList(object):
         subdirlist = []
         for item in os.listdir(os.path.join(root, currentDir)):
             if os.path.isfile(os.path.join(root, currentDir, item)):
-                self.moduleList.append(Module(root, os.path.join(currentDir, item), False))
+                relpath = os.path.join(currentDir, item)
+                i = 0
+                while i < len(self.moduleList):
+                    if(self.moduleList[i].getRelativePath() > relpath):
+                        self.moduleList.insert(i, Module(root, relpath, False))
+                        break
+                    i = i + 1
+                if(i == len(self.moduleList)):
+                    self.moduleList.insert(i, Module(root, relpath, False))
             else:
                 subdirlist.append(os.path.join(currentDir, item))
 
