@@ -105,7 +105,7 @@ class MenuItemUpdateDictEntry(object):
                 buf = buf[:len(buf)-1]
             elif key in [curses.KEY_ENTER, ord('\n')]:
                 break;
-            elif curses.ascii.isalnum(key) or curses.ascii.ascii('/'):
+            elif curses.ascii.isgraph(key):
                 buf = buf + chr(key)
 
         window.clear()
