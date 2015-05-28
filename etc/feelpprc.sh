@@ -8,6 +8,7 @@ trap "" 1 2 3
 module purge
 
 shname=`ps -o comm= -p $$`;
+echo $shname
 
 errmsg1='Error: custom modules are not configured correctly.'
 errmsg2="Error: Shell (${shname}) unsupported for custom modules."
@@ -17,12 +18,13 @@ case $shname in
     bash) scriptpath=`dirname "${BASH_SOURCE[0]}"`;;
     ksh)  scriptpath=`dirname "${.sh.file}"`;; # >= ksh93
     zsh)  scriptpath=`dirname "$0"`;;
-    slurm_script) scriptpath=`pwd`;;
-    sh) echo $errmsg2 $errmsg3;;
-    *)  echo $errmsg2 $errmsg3;;  # default for scripts
+    *) scriptpath=`pwd`;;
 esac
 
-if [ ! -z $scriptpath ]; then
+scriptname=$scriptpath/feelpprc.sh
+echo $scriptname
+
+if [ -f $scriptname ]; then
     if [ -f $envfile ]; then
         # Export all environement variables
         set -a
@@ -33,6 +35,8 @@ if [ ! -z $scriptpath ]; then
     else
         echo "$errmsg1 $errmsg3"
     fi
+else
+    echo $errmsg2 $errmsg3
 fi
 
 trap - 1 2 3
