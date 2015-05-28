@@ -8,7 +8,6 @@ trap "" 1 2 3
 module purge
 
 shname=`ps -o comm= -p $$`;
-echo $shname
 
 errmsg1='Error: custom modules are not configured correctly.'
 errmsg2="Error: Shell (${shname}) unsupported for custom modules."
@@ -22,7 +21,6 @@ case $shname in
 esac
 
 scriptname=$scriptpath/feelpprc.sh
-echo $scriptname
 
 if [ -f $scriptname ]; then
     if [ -f $envfile ]; then
