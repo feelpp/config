@@ -1,0 +1,17 @@
+#%Module1.0################
+set scoreppath $::env(FEELPP_SCOREP142_PATH)
+
+set scorepbinpath $scoreppath/bin
+set scoreplibpath $scoreppath/lib/64
+
+if [module-info mode load]  {
+	prepend-path PATH $scorepbinpath
+	prepend-path LD_LIBRARY_PATH $scoreplibpath
+    prepend-path CMAKE_PREFIX_PATH $scoreppath
+}
+
+if [module-info mode remove] {
+    remove-path PATH $scorepbinpath
+    remove-path LD_LIBRARY_PATH $scoreplibpath
+    remove-path CMAKE_PREFIX_PATH $scoreppath
+}
