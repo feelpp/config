@@ -1,0 +1,27 @@
+#%Module1.0################
+## 
+## Sample boost module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+set vmtkpath $::env(FEELPP_VMTK12_PATH)
+
+set binpath $vmtkpath/bin
+set libpath $vmtkpath/lib/vtk-5.10:$vmtkpath/lib:$vmtkpath/lib/vmtk
+set pythonpath $vmtkpath/bin/Python:$vmtkpath/lib/vtk-5.10:$vmtkpath/lib/vmtk:$vmtkpath/lib/vmtk/vmtk
+set includepath $vmtkpath/include
+
+if [module-info mode load]  {
+    prepend-path CMAKE_PREFIX_PATH $vmtkpath
+	prepend-path PATH $binpath
+	prepend-path LD_LIBRARY_PATH $libpath
+    prepend-path PYTHONPATH $pythonpath
+}
+
+if [module-info mode remove] {
+
+    remove-path CMAKE_PREFIX_PATH $vmtkpath
+	remove-path PATH $binpath
+	remove-path LD_LIBRARY_PATH $libpath
+    remove-path PYTHONPATH $pythonpath
+}
