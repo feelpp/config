@@ -161,8 +161,18 @@ class Module(object):
 
     # build the name of the associated environment variable
     def buildEnvName(self):
-        root, ext = os.path.splitext(os.path.basename(os.path.join(self.rootPath, self.relativePath)))
-        self.envName = "FEELPP_" + root.upper().translate(None, ".-") + "_PATH"
+        # if the last component in the path is only digits
+        fullpath = os.path.join(self.rootPath, self.relativePath)
+        if(os.path.basename(fullpath).translate(None, ".-").isdigit()):
+            # then handle packages in the package/x.y.z form 
+            lst = os.path.normpath(fullpath).split("/")
+            if( len(lst) >= 2 ):
+                vname = lst[len(lst) - 2] + lst[len(lst) - 1]
+                self.envName = "FEELPP_" + vname.upper().translate(None, ".-") + "_PATH"
+        else:
+            # handle packaages in the package-x.y.z form
+            root, ext = os.path.splitext(os.path.basename(os.path.join(self.rootPath, self.relativePath)))
+            self.envName = "FEELPP_" + root.upper().translate(None, ".-") + "_PATH"
 
     def getEnvName(self):
         self.buildEnvName()
