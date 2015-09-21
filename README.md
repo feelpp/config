@@ -54,25 +54,64 @@ machine.
 ## How to configure a new machine
 
 You can run the configuration script
-`./configure` (yet experimental)
+`./configure` to (re)configure your machine, modules, etc...
 
 This script will prompt a menu to automatise the following steps:
-- 1. Configure the hostname of the front-end. Create a file `etc/hpcname`
-  which contains the variable `HPCNAME=<machine>`.
+- 1. Configure the hostname of the front-end. Create a file `etc/environement`
+  which contains several environement variable:
+  - `FEELPP_HPCNAME=<machine>`
+  - `FEELPP_CONFIG_PATH=<path/to/config.git>`
+
 - 2. Create symlinks per installed modules in `modules/files/<machine>` from existing modules
-  in `modules/files/src/`
-- 3. Create the config file in `etc/feelpp.d/<machine>` for the cluster. You can take the file `etc/feelpprc.d/template.sh` as an example. A config file contains all path to your software local installs.
- (Note: each module script contains a variable path that must me set in the cluster config file)
+  in `modules/files/src/` from your choice.
+- 3. Create a machine specific config file in `etc/feelpp.d/<machine>`. This file contains variables with the path to your software local installs only for modules installed during step 2 (You can check an example in `etc/feelpp.d/template.sh` to do it manually).
+
+<hr>
+**IMPORTANT: You have to complete each path in the config file `etc/feelpp.d/<machine>` depending on your custom install**
+<hr>
 
 ## How to create a new module
 
-You can check existing modules in `modules/files/src/` directory. There are three things you
-should remember when you create a new module for a library:
+Module files are tcl scripts. To create a new module, just create a new file in `modules/files/src/` directory respecting the naming convention. Each module set at the first line a specific environment variable.
 
-- Define a new environment variable containing the path of where your library is installed.
-- Use this new environment variable as a reference for your module.
-- Add this new environment variable to the your cluster config file.
+- Module naming convention:
+`<libname>-<the.version>_<compilerused>.feelpp` (e.g `foo-1.0.feelpp`)
+- Module environment variable (uppercase, no dot!):
+`FEELPP_<LIBNAME>-<THEVERSION>_<COMPILERUSED>_PATH` (e.g `FEELPP_FOO10_PATH`)
 
-The convention chosen for naming modules is:
-`<libname>-<the.version>_<compilerused>.feelpp`
+Note: The easiest way is to mimic existing modules and replace the custom environment variable following the naming convention.
+
+##### Example:
+
+```bash
+touch modules/files/src/tool/foolib-1.0.feelpp
+```
+
+Edit this file with your favorite editor and put
+
+```tcl
+# Environment variable.
+set mypath $::env(FEELPP_FOOLIB10_PATH)
+# Local paths.
+set mybinpath $mypath/bin
+set mylibpath $mypath/lib
+
+# Actions for `module load` command.
+if[module-info mode load] {
+ prepend-path PATH $mybinpath
+ prepend-path LD_LIBRARY_PATH $mylibpath
+}
+
+# Actions for `module unload` command.
+if[module-info mode remove] {
+ remove-path PATH $mybinpath
+ remove-path LD_LIBRARY_PATH $mylibpath
+}
+```
+Run the `configure` script, select the new module in the module list, exit.
+Then edit the file `etc/feelpp.d/<machine>.sh` (where machine is the FEELPP_HPCNAME you set).
+The variable `FEELPP_FOOLIB10_PATH=` should be prefilled. Set this path to where foolib is installed (e.g `/usr/local/share/foolib`). 
+Then it's finished!
+
+
 
