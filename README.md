@@ -58,9 +58,13 @@ You can run the configuration script
 
 This script will prompt a menu to automatise the following steps:
 - 1. Configure the hostname of the front-end. Create a file `etc/environement`
-  which contains several environement variable:
-  - `FEELPP_HPCNAME=<machine>`
+  which contains several environment variables:
+  - `FEELPP_MODULE_PATH=<path/to/config.git/modules>`
   - `FEELPP_CONFIG_PATH=<path/to/config.git>`
+  - `FEELPP_HPCNAME=<machine>`
+  - `MODULEPATH=<path/to/config.git/modules/<machine>>:MODULEPATH`
+  - `FEELPP_SHARE_PATH=<path/to/local/share/installs/>`
+
 
 - 2. Create symlinks per installed modules in `modules/files/<machine>` from existing modules
   in `modules/files/src/` from your choice.
