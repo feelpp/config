@@ -40,6 +40,7 @@ machine.
 
 ## Tree
 
+<center>
 | Directory                  | Description                    |
 | -------------------------- | ------------------------------ |
 | etc/                       | all configs scripts            |
@@ -50,7 +51,7 @@ machine.
 | modules/files/\<machine\>    | symlink to modules per machine |
 | modules/profiles/            | profiles as a set of modules   |
 | modules/profiles/\<machine\> | profiles per machine           |
-
+</center>
 ## How to configure a new machine
 
 You can run the configuration script
