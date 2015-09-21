@@ -56,23 +56,23 @@ machine.
 You can run the configuration script
 `./configure` to (re)configure your machine, modules, etc...
 
-This script will prompt a menu to automatise the following steps:
-- 1. Configure the hostname of the front-end. Create a file `etc/environement`
-  which contains several environment variables:
-  - `FEELPP_MODULE_PATH=<path/to/config.git/modules>`
-  - `FEELPP_CONFIG_PATH=<path/to/config.git>`
-  - `FEELPP_HPCNAME=<machine>`
-  - `MODULEPATH=<path/to/config.git/modules/<machine>>:MODULEPATH`
-  - `FEELPP_SHARE_PATH=<path/to/local/share/installs/>`
+<hr>
+NOTE: This script will prompt a menu to automatise the following steps:
 
-
+- 1. Configure the hostname of the front-end. Create a file `etc/environment`
+ which contains several environment variables:
+ - `FEELPP_MODULE_PATH=<path/to/config.git/modules>`
+ - `FEELPP_CONFIG_PATH=<path/to/config.git>`
+ - `FEELPP_HPCNAME=<machine>`
+ - `MODULEPATH=<path/to/config.git/modules/<machine>>:MODULEPATH`
+ - `FEELPP_SHARE_PATH=<path/to/local/share/installs/>`
 - 2. Create symlinks per installed modules in `modules/files/<machine>` from existing modules
   in `modules/files/src/` from your choice.
 - 3. Create a machine specific config file in `etc/feelpp.d/<machine>`. This file contains variables with the path to your software local installs only for modules installed during step 2 (You can check an example in `etc/feelpp.d/template.sh` to do it manually).
+<hr>
 
-<hr>
-**IMPORTANT: You have to complete each path in the config file `etc/feelpp.d/<machine>` depending on your custom install**
-<hr>
+**IMPORTANT: You still have to complete each path in the config file `etc/feelpp.d/<machine>` depending on your custom install**
+
 
 ## How to create a new module
 
