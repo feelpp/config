@@ -1,0 +1,19 @@
+#%Module1.0#####################################################################
+###
+### Allinea Forge 5.0.1 module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\ttools/Forge/5.0.1 - loads Allinea Forge (DDT/MAP) 5.0.1"
+}
+
+module-whatis   "Loads Allinea Forge (DDT/MAP) 5.0.1"
+
+# for Tcl script use only
+set version     5.0.1
+set prefix      $::env(FEELPP_FORGE501_PATH)
+
+prepend-path PATH $prefix/bin
+prepend-path LD_LIBRARY_PATH $prefix/lib/64
+prepend-path CMAKE_PREFIX_PATH $prefix

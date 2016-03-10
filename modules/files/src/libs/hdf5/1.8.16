@@ -1,10 +1,9 @@
 #%Module1.0################
 ## 
 ## hdf5 module
-## Stdout dout contenir des commandes qui seront evaluees par le shell
 #
 #
-set hdf5path $::env(FEELPP_HDF51813_GCC_PATH)
+set hdf5path $::env(FEELPP_HDF51816_PATH)
 
 set libpath $hdf5path/lib
 set binpath $hdf5path/bin

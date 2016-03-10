@@ -30,6 +30,6 @@ if [module-info mode remove] {
 	remove-path PATH $binpath
 	remove-path PATH $includepath
 	remove-path LD_LIBRARY_PATH $libpath
-	unsetenv BOOSTROOT $boostpath
+	unsetenv BOOSTROOT
 	unsetenv BOOST_LAST_CC
 }

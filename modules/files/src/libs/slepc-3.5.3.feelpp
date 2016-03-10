@@ -23,6 +23,6 @@ if [module-info mode remove] {
     remove-path CMAKE_PREFIX_PATH $slepcpath
 	remove-path PATH $binpath
 	remove-path LD_LIBRARY_PATH $libpath
-	unsetenv SLEPC_DIR $slepcpath
+	unsetenv SLEPC_DIR
 
 }

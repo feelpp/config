@@ -1,0 +1,16 @@
+#%Module1.0################
+## 
+## Pydas module
+## installed with pip : install -t /data/software/install/pip pydas
+#
+#
+
+set pydaspath $::env(FEELPP_PYDAS033_PATH)
+
+if [module-info mode load]  {
+    prepend-path PYTHONPATH $pydaspath
+}
+
+if [module-info mode remove] {
+    remove-path PYTHONPATH $pydaspath
+}
