@@ -1,0 +1,24 @@
+#%Module1.0################
+## 
+## AMD APP SDK module
+##
+#
+#
+
+set amdappsdk $::env(FEELPP_AMDAPPSDK30130135_PATH)
+
+if [module-info mode load]  {
+    prepend-path AMDAPPSDKROOT $amdappsdk
+    prepend-path LD_LIBRARY_PATH $amdappsdk/lib/x86
+    prepend-path LD_LIBRARY_PATH $amdappsdk/lib/x86_64
+    # OPENCL_VENDOR_PATH: This variable seems to only accept one argument,
+    # leave it to the default value /etc/OpenCL/vendors
+    #prepend-path OPENCL_VENDOR_PATH $amdappsdk/etc/OpenCL/vendors
+}
+
+if [module-info mode remove] {
+    remove-path AMDAPPSDKROOT $amdappsdk
+    remove-path LD_LIBRARY_PATH $amdappsdk/lib/x86
+    remove-path LD_LIBRARY_PATH $amdappsdk/lib/x86_64
+    #remove-path OPENCL_VENDOR_PATH $amdappsdk/etc/OpenCL/vendors
+}

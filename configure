@@ -1,118 +1,558 @@
-#!/usr/bin/env bash
-t(){ type "$1"&>/dev/null;}
+#!/usr/bin/env python2
 
-# Determine dialog box program
-while :
-do
-   t whiptail && DIALOG=whiptail && break
-   t dialog && DIALOG=dialog && DIALOG_ESC=-- && break
-   t tcdialog && DIALOG=tcdialog && DIALOG_ESC=-- && break
-   exec date +s"Dialog or whiptail must be installed!"
-done;
+import curses
+from curses import panel, ascii
+import os
+import socket
+import shutil
+import argparse
+import logging
 
-# full path to dirs and modules
-moddirs=$(find modules/files/src -type d)
-mods=$(find modules/files/src -type f)
+Settings=dict()
+LEVELS=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
 
-# Return modlist variable
-for i in $mods
-do
-    modbase=$(basename $(dirname $i))
-    modlist="$modlist\"\" $modbase/$(basename $i) \"\" "
-done
+# Add log level options.
+parser = argparse.ArgumentParser(description='Modules config options:')
+parser.add_argument("-v", "--vlog",
+                    dest="verboseLogLevel",
+                    choices=LEVELS,
+                    help="verbose with logging level")
+parser.add_argument("-l", "--log",
+                    dest="fileLogLevel",
+                    action="store_true",
+                    help="export log into a file")
+args = parser.parse_args()
 
-#--------------------------------------------------------------------------------
-# FUNCTIONS
-#--------------------------------------------------------------------------------
+# Use vlog to print message with prefix level.
+vlog = logging.getLogger("vlog")
+if( args.verboseLogLevel ):
+    vlog.setLevel(getattr(logging, args.verboseLogLevel))
+    vlog.addHandler( logging.StreamHandler() )
 
-# Return HPCNAME variable
-function Menu.Hostname
-{
-    if [ ! -f "./etc/hpcname" ]
-    then
-        HPCNAME=$( $DIALOG \
-                   --title "Modules HPC name" \
-                   --inputbox "Set cluster front-end hostname" \
-                   0 0 \
-                   $HOSTNAME \
-                   $DIALOG_ESC "$@" \
-                   3>&1 1>&2 2>&3 );
-        echo "HPCNAME=$HPCNAME" > ./etc/hpcname
-        mkdir -p ./modules/files/$HPCNAME
-    else
-        $DIALOG --title "Confirm" \
-                --yesno \
-                " A previous HPCNAME has been found !\nDo you want to reconfigure the HPC name ?" \
-                0 0 \
-                $DIALOG_ESC "$@"
+# Use log to write log message with prefix level.
+log = logging.getLogger("log")
+if( args.fileLogLevel ):
+    formatter=logging.Formatter('%(levelname)8s: line %(lineno)s: %(message)s')
+    fileHandler=logging.FileHandler('configure.log', mode='w')
+    fileHandler.setFormatter(formatter)
+    log.setLevel('DEBUG')
+    log.addHandler( fileHandler )
 
-        case $? in
-           0) rm ./etc/hpcname
-              Menu.Hostname ;;
-           *) ;; # Exit
-        esac
-    fi
-}
+class MenuItem(object):
+    def __init__(self, description, function):
+        self.description = description
+        self.function = function
+
+    def getDescription(self):
+        return self.description
+
+    def getFunction(self):
+        return self.function
+
+class DialogYesNo(object):
+    def ask(self, question, screen):
+        window = screen.subwin(0,0)
+        window.keypad(1)
+        pnl = panel.new_panel(window)
+        pnl.hide()
+        panel.update_panels()
+
+        position = 0
+        pnl.top()
+        pnl.show()
+        window.clear()
+
+        bVal = False
+        while True:
+            window.clear()
+            #window.refresh()
+            curses.doupdate()
+
+            lpos = 1
+            window.addstr(lpos, 1, question, curses.A_NORMAL)
+            lpos = lpos + 1
+            if(bVal):
+                window.addstr(lpos, 1, "YES", curses.A_REVERSE)
+                window.addstr(lpos, 10, "NO", curses.A_NORMAL)
+            else:
+                window.addstr(lpos, 1, "YES", curses.A_NORMAL)
+                window.addstr(lpos, 10, "NO", curses.A_REVERSE)
+
+            key = window.getch()
+
+            if key in [curses.KEY_LEFT, curses.KEY_UP]:
+                bVal = True
+            elif key in [curses.KEY_RIGHT, curses.KEY_DOWN]:
+                bVal = False
+            elif key in [curses.KEY_ENTER, ord('\n')]:
+                window.clear()
+                pnl.hide()
+                panel.update_panels()
+                curses.doupdate()
+                return bVal;
+
+class MenuItemUpdateDictEntry(object):
+    def __init__(self, desc, dct, key, stdscreen):
+        self.desc = desc
+        self.dct = dct
+        self.key = key
+        self.stdscreen = stdscreen
+
+    def getDescription(self):
+        return self.desc + ": " + self.dct[self.key]
+
+    def getFunction(self):
+        return self.update
+
+    def update(self):
+        window = self.stdscreen.subwin(0,0)
+        window.keypad(1)
+        pnl = panel.new_panel(window)
+        pnl.hide()
+        panel.update_panels()
+
+        position = 0
+        pnl.top()
+        pnl.show()
+        window.clear()
+
+        # Set the default value to the previous HPCNAME
+        buf = self.dct[self.key]
+        bufinit = buf
+        while True:
+            window.clear()
+            #window.refresh()
+            curses.doupdate()
+
+            lpos = 1
+            window.addstr(lpos, 1, "Please enter a new value for " + self.key, curses.A_NORMAL)
+            lpos = lpos + 1
+            window.addstr(lpos, 1, buf, curses.A_NORMAL)
+
+            key = window.getch()
+
+            if key in [curses.ascii.BS,curses.KEY_DC,curses.KEY_BACKSPACE]:
+                buf = buf[:len(buf)-1]
+            elif key in [curses.KEY_ENTER, ord('\n')]:
+                break;
+            elif key in [curses.ascii.ESC, ord('\n')]:
+                buf=bufinit
+                break;
+            elif curses.ascii.isgraph(key):
+                buf = buf + chr(key)
+
+        window.clear()
+        pnl.hide()
+        panel.update_panels()
+        curses.doupdate()
+
+        if(buf != ""):
+            self.dct[self.key] = buf
+
+class Module(object):
+    def __init__(self, rootPath, relativePath, state):
+        self.rootPath = rootPath
+        self.relativePath = relativePath
+        self.state = state
+
+        self.installPath = ""
+
+        self.envName = self.buildEnvName()
+
+    # build the name of the associated environment variable
+    def buildEnvName(self):
+        # if the last component in the path is only digits or starts with digits (at least 2)
+        fullpath = os.path.join(self.rootPath, self.relativePath)
+        if(os.path.basename(fullpath).translate(None, ".-").isdigit() or os.path.basename(fullpath).translate(None, ".-")[:2].isdigit()):
+            # then handle packages in the package/x.y.z form 
+            lst = os.path.normpath(fullpath).split("/")
+            if( len(lst) >= 2 ):
+                vname = lst[len(lst) - 2] + lst[len(lst) - 1]
+                self.envName = "FEELPP_" + vname.upper().translate(None, ".-") + "_PATH"
+        else:
+            # handle packaages in the package-x.y.z form
+            root, ext = os.path.splitext(os.path.basename(os.path.join(self.rootPath, self.relativePath)))
+            log.info(root + " " + ext + "\n")
+            if(ext == ".feelpp"):
+                self.envName = "FEELPP_" + root.upper().translate(None, ".-") + "_PATH"
+            else:
+                fname = os.path.basename(os.path.join(self.rootPath, self.relativePath))
+                log.info(fname + "\n")
+                self.envName = "FEELPP_" + fname.upper().translate(None, ".-") + "_PATH"
+
+    def getEnvName(self):
+        self.buildEnvName()
+        return self.envName
+
+    def getState(self):
+        return self.state
+
+    def setState(self, state):
+        self.state = state
+
+    def setInstallPath(self, path):
+        self.installPath = path
+
+    def getRootPath(self):
+        return self.rootPath
+
+    def getRelativePath(self):
+        return self.relativePath
+
+    def getInstallPath(self):
+        return self.installPath
+
+class MenuItemModuleList(object):
+    def __init__(self, desc, dct, key, stdscreen):
+        self.desc = desc
+        self.dct = dct
+        self.key = key
+        self.stdscreen = stdscreen
+
+        self.window = stdscreen.subwin(0,0)
+        self.window.keypad(1)
+        self.panel = panel.new_panel(self.window)
+        self.panel.hide()
+        panel.update_panels()
+
+        self.windowStart = 0
+        self.windowSize = 0
+        self.position = 0
+
+        self.moduleList = []
+
+        path = os.path.join(self.dct[self.key], "files", "src")
+        self.buildModuleList(path, "", 0)
+
+        path = os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"])
+        # Check if we already activated some modules for this computer
+        # before trying to build a module list
+        if(os.path.exists(path)):
+            self.updateModuleState(path, "")
+
+    def getDescription(self):
+        return self.desc + ": " + self.dct[self.key]
+
+    def getFunction(self):
+        return self.update
+
+    def buildModuleList(self, root, currentDir, level):
+        if(level == 0):
+            self.moduleList = []
+
+        subdirlist = []
+        for item in os.listdir(os.path.join(root, currentDir)):
+            if os.path.isfile(os.path.join(root, currentDir, item)):
+                relpath = os.path.join(currentDir, item)
+                i = 0
+                while i < len(self.moduleList):
+                    if(self.moduleList[i].getRelativePath() > relpath):
+                        self.moduleList.insert(i, Module(root, relpath, False))
+                        break
+                    i = i + 1
+                if(i == len(self.moduleList)):
+                    self.moduleList.insert(i, Module(root, relpath, False))
+            else:
+                subdirlist.append(os.path.join(currentDir, item))
+
+        for subdir in subdirlist:
+            self.buildModuleList(root, subdir, 1)
+
+    def updateModuleState(self, root, currentDir):
+        subdirlist = []
+        for item in os.listdir(os.path.join(root, currentDir)):
+            if os.path.isfile(os.path.join(root, currentDir, item)):
+                for m in self.moduleList:
+                    if m.getRelativePath() == os.path.join(currentDir, item):
+                        m.state = True
+            else:
+                subdirlist.append(os.path.join(currentDir, item))
+
+        for subdir in subdirlist:
+            self.updateModuleState(root, subdir)
+
+    def navigate(self, n):
+        self.position += n
+        if self.position < 0:
+            self.position = 0
+            self.windowStart = max(self.windowStart - 1, 0)
+        if self.position >= min((len(self.moduleList) - 1), curses.LINES - 5):
+            self.position = min(len(self.moduleList)-1, curses.LINES-5)
+            self.windowStart = self.windowStart + 1
+        if self.windowStart >= (len(self.moduleList) - 1 - (curses.LINES - 5)):
+            self.windowStart = min(self.windowStart + 1, len(self.moduleList)-(curses.LINES - 5) - 1)
+        #if self.position < 0:
+        #    self.position = 0
+        #elif self.position >= len(self.moduleList):
+        #    self.position = len(self.moduleList)-1
+
+    def update(self):
+        self.moduleList = []
+        path = os.path.join(self.dct[self.key], "files", "src")
+        self.buildModuleList(path, "", 0)
+        # Remember default
+        moduleListInit=list(self.moduleList)
+
+        path = os.path.join(self.dct[self.key], "files", Settings["FEELPP_HPCNAME"])
+        # Check if we already activated some modules for this computer
+        # before trying to build a module list
+        if(os.path.exists(path)):
+            self.updateModuleState(path, "")
+
+        self.panel.top()
+        self.panel.show()
+        self.window.clear()
+
+        while True:
+            self.window.clear()
+            #self.window.refresh()
+            curses.doupdate()
+
+            lpos = 1
+            self.window.addstr(lpos, 1, "Module list (Space to select, Enter to validate changes, Escape to cancel)", curses.A_NORMAL)
+            lpos = lpos + 1
+
+            for index in range(min(len(self.moduleList), (curses.LINES - 5) + 1)):#len(self.moduleList)):
+                if index == self.position:
+                    mode = curses.A_REVERSE
+                else:
+                    mode = curses.A_NORMAL
+
+                if(self.moduleList[index + self.windowStart].getState()):
+                    msg = '\t%d. [*] %s %s' % (index + self.windowStart, self.moduleList[index + self.windowStart].getRelativePath(), self.moduleList[index + self.windowStart].getRootPath())
+                else:
+                    msg = '\t%d. [ ] %s %s' % (index + self.windowStart, self.moduleList[index + self.windowStart].getRelativePath(), self.moduleList[index + self.windowStart].getRootPath())
+                self.window.addstr(lpos, 1, msg, mode)
+                lpos = lpos + 1
+
+            key = self.window.getch()
+
+            if key in [curses.ascii.SP]:
+                if(self.moduleList[self.position + self.windowStart].getState()):
+                    self.moduleList[self.position + self.windowStart].setState(False)
+                else:
+                    self.moduleList[self.position + self.windowStart].setState(True)
+            # When the user press escape, leave the loop
+            elif key == curses.ascii.ESC:
+                # TODO Bug Cancel modifications.
+                self.moduleList=list(moduleListInit)
+                break
+            elif key == ord('\n'):
+                # Valid modifications.
+                break
+            elif key == curses.KEY_UP:
+                self.navigate(-1)
+
+            elif key == curses.KEY_DOWN:
+                self.navigate(1)
+
+        self.window.clear()
+        self.panel.hide()
+        panel.update_panels()
+        curses.doupdate()
+
+        removeNotActiveModuleList(self.moduleList)
+        writeActiveModuleList(self.moduleList)
+
+class Menu(object):
+
+    def __init__(self, title, items, stdscreen):
+        self.window = stdscreen.subwin(0,0)
+        self.window.keypad(1)
+        self.panel = panel.new_panel(self.window)
+        self.panel.hide()
+        panel.update_panels()
+
+        self.position = 0
+        self.title = title
+        self.items = items
+        self.items.append(MenuItem('Exit','Exit'))
+
+    def navigate(self, n):
+        self.position += n
+        if self.position < 0:
+            self.position = 0
+        elif self.position >= len(self.items):
+            self.position = len(self.items)-1
+
+    def display(self):
+        self.panel.top()
+        self.panel.show()
+        self.window.clear()
+
+        while True:
+            self.window.refresh()
+            curses.doupdate()
+
+            lpos = 1
+            self.window.addstr(lpos, 1, self.title, curses.A_NORMAL)
+            lpos = lpos + 1
+
+            for index in range(len(self.items)):
+                if index == self.position:
+                    mode = curses.A_REVERSE
+                else:
+                    mode = curses.A_NORMAL
+
+                msg = '\t%d. %s' % (index, self.items[index].getDescription())
+                self.window.addstr(lpos, 1, msg, mode)
+                lpos = lpos + 1
+
+            key = self.window.getch()
+
+            if key in [curses.KEY_ENTER, ord('\n')]:
+                if self.position == len(self.items)-1:
+                    break
+                else:
+                    self.items[self.position].getFunction()()
+
+            elif key == curses.KEY_UP:
+                self.navigate(-1)
+
+            elif key == curses.KEY_DOWN:
+                self.navigate(1)
+
+        self.window.clear()
+        self.panel.hide()
+        panel.update_panels()
+        curses.doupdate()
 
 
+# Parse a file with the following format:
+# entry=value
+# ...
+# and put its content in a dictionary
+def parseConfigFile(filename, outDict):
 
-function Menu.Modules
-{
-    if [ ! -f "./etc/hpcname" ]
-    then
-        $DIALOG --title "Confirm" \
-                --yesno \
-                "Set the HPCNAME first" \
-                0 0 \
-                $DIALOG_ESC "$@"
-        case $? in
-           0) Menu.Hostname ;;
-           *) ;; # Exit
-        esac
-    else
-        source ./etc/hpcname
-        selectmods=$( $DIALOG \
-             --title "HPC frontal hostname" \
-             --checklist "Select modules to install:" 0 0 \
-             $modlist \
-             $HOSTNAME $DIALOG_ESC "$@" \
-             3>&1 1>&2 2>&3 );
+    # Open the filename
+    f = open(filename, "r")
+    lines = f.readlines()
+    for line in lines:
+        # if line start with a #, it is a comment
+        if(not line.lstrip().startswith("#")):
+            # clean up the line
+            tl = line.lstrip().translate(None, "\n")
+            # if the line is not empty, split it
+            if(tl != ""):
+                spl = tl.split("=")
+                outDict[spl[0]] = spl[1]
+    f.close()
 
-        # Create symlinks
-        for istr in $selectmods
-        do
-            inoquotes=${istr:1:${#istr}-2}
-            mkdir -p ./modules/files/$HPCNAME/$(dirname $inoquotes)
-            ln -s ../../src/$inoquotes  \
-                  ./modules/files/$HPCNAME/$inoquotes
-        done
-    fi
-}
+def writeActiveModuleList(moduleList):
 
-function Menu.Show
-{
-    menuchoice=$( $DIALOG \
-                   --title "Menu" \
-                   --ok-button "select" \
-                   --cancel-button "exit" \
-                   --menu "Cluster module configuration (Experimental)" 20 40 0\
-                   1 "Hpcname" \
-                   2 "Modules" \
-                   $DIALOG_ESC "$@" \
-                   3>&1 1>&2 2>&3 );
-}
+    modfile=os.path.join(Settings["FEELPP_CONFIG_PATH"], "etc", "feelpprc.d", Settings["FEELPP_HPCNAME"] + ".sh")
+    log.info(modfile)
 
-#--------------------------------------------------------------------------------
-# Main
-#--------------------------------------------------------------------------------
+    prevModules = dict()
+    if(os.path.exists(modfile)):
+        parseConfigFile(modfile, prevModules)
+    log.info("PREVMODULES=" + str(prevModules) + "\n\n")
 
-run=true
-while($run)
-do
-    Menu.Show
-    case  $menuchoice in
-      1) Menu.Hostname;;
-      2) Menu.Modules;;
-      *) run=false # exit
-    esac
-done
+    modfile=os.path.join(Settings["FEELPP_CONFIG_PATH"], "etc", "feelpprc.d", Settings["FEELPP_HPCNAME"] + ".sh")
+    f = open(modfile, "w")
+
+    # Create directories and symlinks
+    for m in moduleList:
+        if(m.getState()):
+            modpath=os.path.dirname( os.path.join( Settings["FEELPP_MODULE_PATH"],"files",
+                                                   Settings["FEELPP_HPCNAME"],
+                                                   m.getRelativePath() ) )
+            if(not os.path.exists(modpath)):
+                os.makedirs(modpath)
+            modpath=os.path.join( Settings["FEELPP_MODULE_PATH"], "files", Settings["FEELPP_HPCNAME"], m.getRelativePath())
+            if(not os.path.exists(modpath)):
+                os.symlink(
+                os.path.join( Settings["FEELPP_MODULE_PATH"], "files", "src", m.getRelativePath()),
+                os.path.join(modpath)
+                )
+
+    # Create cache.
+    for m in moduleList:
+        # if the current module was previously in the file
+        if(m.getEnvName() in prevModules):
+            # and if it is still active
+            # we keep the previous configuration
+            if(m.getState()):
+                f.write(m.getEnvName() + "=" + prevModules[m.getEnvName()] + "\n")
+                log.debug("Keeping old configuration for " + m.getEnvName() + "\n")
+            # otherwise the module is silently deleted from the file
+            else:
+                log.debug("Deleting previous entry for " + m.getEnvName() + "\n")
+        # if the module was not previously active
+        else:
+            # and it is now active, then we set it up in the file
+            if(m.getState()):
+                f.write(m.getEnvName() + "=" + Settings["FEELPP_SHARE_PATH"] + "\n")
+                log.debug("using new configuration for " + m.getEnvName() + "\n")
+
+def removeNotActiveModuleList(moduleList):
+    for m in moduleList:
+        if(not m.getState()):
+            modpath=os.path.join( Settings["FEELPP_MODULE_PATH"], "files",
+                                  Settings["FEELPP_HPCNAME"], m.getRelativePath())
+            moddir=os.path.dirname( modpath )
+            if( os.path.exists(modpath) ):
+                os.remove( modpath )
+                # Remove empty directory.
+                if( os.listdir( moddir ) == [] ):
+                    os.rmdir( moddir )
+
+class MyApp(object):
+
+    def __init__(self, stdscreen):
+        self.screen = stdscreen
+        curses.curs_set(0)
+
+        # Menu for setting name of the cluster and path to installed applications
+        hpcMenuItems = [
+        MenuItemUpdateDictEntry("Cluster name", Settings, "FEELPP_HPCNAME", self.screen),
+        MenuItemUpdateDictEntry("Path to installed software", Settings, "FEELPP_SHARE_PATH", self.screen),
+        ]
+        hpcMenu = Menu("HPC Name", hpcMenuItems, self.screen)
+
+        # Main menu
+        mainMenuItems = [
+        # Cluster info submenu
+        MenuItem('HPC Name', hpcMenu.display),
+        # Configure list of module used
+        MenuItemModuleList("List of Modules", Settings, "FEELPP_MODULE_PATH", self.screen),
+        ]
+        mainMenu = Menu("Module configuration", mainMenuItems, self.screen)
+        mainMenu.display()
+
+if __name__ == '__main__':
+    # read back previous module configuration
+    # if the file exists
+    prevConfFile = os.path.join(os.path.dirname(os.path.realpath(__file__)), "etc", "environment")
+    if(os.path.exists(prevConfFile)):
+        parseConfigFile(prevConfFile, Settings)
+
+    # Check if we have at least several mandatory variables from the environment file
+    # otherwise we add them
+    if(not("FEELPP_HPCNAME" in Settings)):
+        Settings["FEELPP_HPCNAME"] = socket.gethostname()
+    if(not("FEELPP_CONFIG_PATH" in Settings)):
+        Settings["FEELPP_CONFIG_PATH"] = os.path.dirname(os.path.realpath(__file__))
+    if(not("FEELPP_MODULE_PATH" in Settings)):
+        Settings["FEELPP_MODULE_PATH"] = Settings["FEELPP_CONFIG_PATH"] + "/modules"
+    if(not("FEELPP_SHARE_PATH" in Settings)):
+        Settings["FEELPP_SHARE_PATH"] = "/usr/local/feelpp"
+
+    # Launch the curses interface
+    curses.wrapper(MyApp)
+
+    # Set the module path after having using the app
+    # To ensure that we get the correct HPCNAME
+    Settings["MODULEPATH"] = os.path.join(Settings["FEELPP_MODULE_PATH"], "files", Settings["FEELPP_HPCNAME"]) + ":$MODULEPATH"
+    path = os.path.join(Settings["FEELPP_MODULE_PATH"], "profiles", Settings["FEELPP_HPCNAME"])
+    if(os.path.exists(path)):
+        Settings["MODULEPATH"] = path + ":" + Settings["MODULEPATH"]
+
+    # output configuration into etc/environment
+    f = open(os.path.join(Settings["FEELPP_CONFIG_PATH"], "etc", "environment"), "w")
+
+    for k, v in iter(Settings.items()):
+        f.write(k + "=" + v + "\n")
+    f.close()
+
+# vim:set tw=80 sw=4 sts=4 et foldmethod=indent foldlevel=0 foldnestmax=2:

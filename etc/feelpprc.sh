@@ -1,31 +1,40 @@
 ################################################################################
-# Author(s): Guillaume Dollé <gdolle@math.unistra.fr>
-#
-# NOTE :
-#   Just source this file. You can type in your favorite shell
-#   `echo "source /path/to/feelpprc.sh" >> ~/.bashrc`
-#
+#  System-wide configuration script.
+#  Just source this file in your favorite shell.
 ################################################################################
+
+trap "" 1 2 3
 
 module purge
 
-#currentdir=${BASH_SOURCE[0]%/*}
-currentdir=`pwd`
-confdir=$currentdir/feelpprc.d
-hpcnamefile=$currentdir/hpcname
+shname=`ps -o comm= -p $$`;
 
-# set the module apth relatively to the current directory (so the config is also available for user clones)
-export FEELPP_MODULE_PATH="$currentdir/../modules"
+errmsg1='Error: custom modules are not configured correctly.'
+errmsg2="Error: Shell (${shname}) unsupported for custom modules."
+errmsg3='Please contact your administrator!'
 
-if [ -f $hpcnamefile ]
-then
-		# get the value of HPCNAME
-		source $hpcnamefile
-		export FEELPP_HPCNAME=${HPCNAME}
-		# source the corresponding configuration
-    source "$confdir/$HPCNAME.sh"
+case $shname in
+    bash) scriptpath=`dirname "${BASH_SOURCE[0]}"`;;
+    ksh)  scriptpath=`dirname "${.sh.file}"`;; # >= ksh93
+    zsh)  scriptpath=`dirname "$0"`;;
+    *) scriptpath=`pwd`;;
+esac
+
+scriptname=$scriptpath/feelpprc.sh
+
+if [ -f $scriptname ]; then
+    if [ -f $envfile ]; then
+        # Export all environement variables
+        set -a
+        . $scriptpath/environment
+        # source the corresponding configuration
+        . $scriptpath/feelpprc.d/$FEELPP_HPCNAME.sh
+        set +a
+    else
+        echo "$errmsg1 $errmsg3"
+    fi
 else
-    echo "-- HPCNAME variable not found!
-=> Feel++ modules might not be configured correctly.
-=> Please contact an administrator"
+    echo $errmsg2 $errmsg3
 fi
+
+trap - 1 2 3

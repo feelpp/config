@@ -1,0 +1,20 @@
+#%Module1.0#####################################################################
+###
+### ParaView 5.0.0 module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\tmpi/openmpi/1.8.5 - loads OpenMPI 1.8.5"
+}
+
+module-whatis   "Loads OpenMPI 1.8.5"
+
+# for Tcl script use only
+set version     1.8.5
+set prefix      $::env(FEELPP_OPENMPI185_PATH)
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path PATH $prefix/bin
+prepend-path LD_LIBRARY_PATH $prefix/lib
+prepend-path MANPATH $prefix/share/man

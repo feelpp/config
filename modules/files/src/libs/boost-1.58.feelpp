@@ -5,14 +5,13 @@
 #
 #
 set modulespath $::env(FEELPP_MODULE_PATH)/files/$::env(FEELPP_HPCNAME)
-set boostpath $::env(FEELPP_BOOST149_GCC472_PATH)
+set boostpath $::env(FEELPP_BOOST158_PATH)
 
 # Dependency to at least one compiler.
-set pattern1 "compilers/gcc*.feelpp"
-set pattern2 "compilers/clang*.feelpp"
-set compilers [glob -tails -directory $modulespath -type f $pattern1 $pattern2]
-prereq {*}$compilers
-
+#set pattern1 "compilers/gcc*.feelpp"
+#set pattern2 "compilers/clang*.feelpp"
+#set compilers [glob -tails -directory $modulespath -type f $pattern1 $pattern2]
+#prereq {*}$compilers
 
 # Choose the right path to boost.
 set libpath $boostpath/lib
@@ -20,16 +19,18 @@ set binpath $boostpath/bin
 set includepath $boostpath/include
 
 if [module-info mode load]  {
-	append-path PATH $binpath
-	append-path  PATH $includepath
+    prepend-path CMAKE_PREFIX_PATH $boostpath
+	prepend-path PATH $binpath
+	prepend-path  PATH $includepath
 	prepend-path LD_LIBRARY_PATH $libpath
 	setenv BOOSTROOT $boostpath
 }
 
 if [module-info mode remove] {
+    remove-path CMAKE_PREFIX_PATH $boostpath
 	remove-path PATH $binpath
 	remove-path PATH $includepath
 	remove-path LD_LIBRARY_PATH $libpath
-	unsetenv BOOSTROOT $boostpath
+	unsetenv BOOSTROOT
 	unsetenv BOOST_LAST_CC
 }

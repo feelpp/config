@@ -4,23 +4,22 @@
 ## Stdout dout contenir des commandes qui seront evaluees par le shell
 #
 #
-set slepcpath $::env(FEELPP_SLEPC351_GCC_PATH)
+set petscpath $::env(FEELPP_PETSC353_OMPI185_PATH)
 
-# won't be needed : only static libraries
-set libpath $slepcpath/lib
-set binpath $slepcpath/bin
-set includepath $slepcpath/include
+set libpath $petscpath/lib
+set binpath $petscpath/bin
+set includepath $petscpath/include
 
 if [module-info mode load]  {
+    prepend-path CMAKE_PREFIX_PATH $petscpath
 	prepend-path PATH $binpath
 	prepend-path LD_LIBRARY_PATH $libpath
-	setenv SLEPC_DIR $slepcpath
+	prepend-path PETSC_DIR $petscpath
 }
 
 if [module-info mode remove] {
-
+    remove-path CMAKE_PREFIX_PATH $petscpath
 	remove-path PATH $binpath
 	remove-path LD_LIBRARY_PATH $libpath
-	unsetenv SLEPC_DIR
-
+	remove-path PETSC_DIR $petscpath
 }

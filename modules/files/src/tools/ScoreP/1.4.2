@@ -1,0 +1,19 @@
+#%Module1.0#####################################################################
+###
+### Score-P 1.4.2 module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\ttools/ScoreP/1.4.2 - loads Score-P 1.4.2"
+}
+
+module-whatis   "Loads Score-P 1.4.2"
+
+# for Tcl script use only
+set version     1.4.2
+set prefix      $::env(FEELPP_SCOREP142_PATH)
+
+prepend-path PATH $prefix/bin
+prepend-path LD_LIBRARY_PATH $prefix/lib/64
+prepend-path CMAKE_PREFIX_PATH $prefix
