@@ -32,14 +32,13 @@ _NB: In general, the HPCNAME is set to the frontal hostname._
    ```
    Feel++ profiles and new modules should appear at the bottom of the
    printed list.
-   If it is not the case go back to step 1. or contact your administrator.
+   If it is not the case go back [installation section](develop#installation) step 1. .
 
 2. To load/unload a module just type
   ```
   module load <modulename>
   module unload <modulename>
   ```
-
 3. Administrators provide profiles to load a list of modules
    compatible with the Feel++ library. Profiles should appears during step 1. (at the bottom).
 4. Administrators guaranty Feel++ compatibility only with existing profile!
@@ -133,7 +132,7 @@ Module files are tcl scripts. To create a new module,
     variable must be defined with the following convention:
     `FEELPP_<LIBNAME><LIBVERSION>_PATH` (e.g `FEELPP_PARAVIEW500_PATH`).
 
-3. You are done! Go back to section [Installation](develop#installation) to select
+3. You are done! Go back to section [Installation](develop#installation-1) to select
    your new module.
 
 ##### Remarks:
