@@ -183,7 +183,7 @@ documentation](http://modules.sourceforge.net/man/modulefile.html).
 ### Environment variable
 
 The configure script set automatically several environment variables written in the file
-"etc/environement". You should not edit this file.
+"etc/environment". You should not edit this file.
 
 | Variable name  | Description |
 | ---------      | ---------- |
