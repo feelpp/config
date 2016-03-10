@@ -43,13 +43,13 @@ _NB: In general, the HPCNAME is set to the frontal hostname._
 3. Administrators provide profiles to load a list of modules
    compatible with the Feel++ library. Profiles should appears during step 1. (at the bottom).
 4. Administrators guaranty Feel++ compatibility only with existing profile!
-   Profile can be loaded like any module.
+   Profile can be loaded like any module
    ```
    module load <profname.profile>
-   ```
-Go to step 1. to see all available profile.
+   ```.
+   Go to step 1. to see all available profiles.
 
-# Administrators notes
+# Administrator notes
 
 ## Recommendation
 
@@ -64,7 +64,7 @@ libraries can be compiled in the home directory, for example
 
 ## Tree
 
-This repository uses UNIX-like representation.
+This repository follows UNIX-like representation.
 
 ### Directory
 
@@ -95,27 +95,27 @@ and modules installation.
 ```
 ./configure
 ```
-2. Use the menu 1) to set the cluster name $HPCNAME and the prefix path to
-   library installation (default "/usr/local/feelpp/").
-3. Use the menu 2) to select in the list all modules that are compiled and
-   installed.  If the library version is not available, go to [create new
-   modules](##Create_new_modules) section.
+2. Use the menu (1) to set the cluster name $HPCNAME and the prefix path to
+   library installation (default `/usr/local/feelpp/`).
+3. Use the menu (2) to select in the list all modules that are compiled and
+   installed.  If the library version is not available, go to 
+   [create new modules](develop#create-new-modules) section.
 4. Exit the configure script.
 5. A set of symlinks has been created for the current $HPCNAME machine.  You
    have still to complete (by hand) the predefined path in the new
-   configuration script "etc/feelpprc.d/$HPCNAME.sh".
+   configuration script `etc/feelpprc.d/$HPCNAME.sh`.
 
 ## Update installation
 
 Just run the configuration script and make your changes.
 
-WARNING: Be careful when you deselect modules! The corresponding module
+*WARNING: Be careful when you deselect modules! The corresponding module
 VARIABLE will be removed from the cluster configuration script $HPCNAME.sh (not
-the module script) once validated!
+the module script) once validated!*
 
 ## Create new modules
 
-Create new module only if it is not listed in the configuration script menu 2).
+Create new module only if it is not listed in the configuration script menu (2).
 
 Module files are tcl scripts. To create a new module,
 
@@ -133,7 +133,8 @@ Module files are tcl scripts. To create a new module,
     variable must be defined with the following convention:
     `FEELPP_<LIBNAME><LIBVERSION>_PATH` (e.g `FEELPP_PARAVIEW500_PATH`).
 
-3. You are done! Go back to section [Installation](##Installation)
+3. You are done! Go back to section [Installation](develop#installation) to select
+   your new module.
 
 ##### Remarks:
 - If the library is compiler specific, we recommend to set also the compiler
@@ -183,7 +184,7 @@ documentation](http://modules.sourceforge.net/man/modulefile.html).
 
 ### Environment variable
 
-The configure script set a number of configuration variable written in the file
+The configure script set automatically several environment variables written in the file
 "etc/environement"
 
 | Variable name  |
