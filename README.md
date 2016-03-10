@@ -7,8 +7,9 @@ a set of scripts very common on HPC clusters.
 [dynamicmodules](http://modules.sourceforge.net/) has to be installed first
 before going any further.
 
-The new configuration method consists in a `configure` script. You should avoid editing
-files and/or symlinks by hand except when it is specified explicitly.
+Preamble: The new configuration method for administrators consists in a new python
+`configure` script. You should avoid editing files and/or symlinks by hand except 
+when it is mentionned explicitly.
 
 # User notes
 
