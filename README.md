@@ -19,7 +19,7 @@ To load the modules config environment:
    ```
 2. Reload your shell to update your environment.
 3. Verify that the config is loaded (The command `echo $HPCNAME` should return a non-empty string.
-   if nothing is returned, please verify first that you have correctly set the path
+   If nothing is returned, please verify first that you have correctly set the path
    to the script. Otherwise please contact your administrator.
 
 _NB: In general, the HPCNAME is set to the frontal hostname._
@@ -32,7 +32,7 @@ _NB: In general, the HPCNAME is set to the frontal hostname._
    ```
    Feel++ profiles and new modules should appear at the bottom of the
    printed list.
-   If it is not the case go back [installation section](develop#installation) step 1. .
+   If it is not the case go back to [installation section](develop#installation) step 1. .
 
 2. To load/unload a module just type
   ```
@@ -46,7 +46,6 @@ _NB: In general, the HPCNAME is set to the frontal hostname._
    ```
    module load <profname.profile>
    ```.
-   Go to step 1. to see all available profiles.
 
 # Administrator notes
 
@@ -142,7 +141,7 @@ Module files are tcl scripts. To create a new module,
   `FEELPP_PETSC362_OPENMPI163_PATH`).
 - Also, avoid punctuation in naming.
 
-##### Example:
+#### Example:
 
 ```bash
 touch modules/files/src/tools/foolib/1.0.5
@@ -184,12 +183,12 @@ documentation](http://modules.sourceforge.net/man/modulefile.html).
 ### Environment variable
 
 The configure script set automatically several environment variables written in the file
-"etc/environement"
+"etc/environement". You should not edit this file.
 
-| Variable name  |
-| ---            |
-| FEELPP_MODULE_PATH |
-| FEELPP_SHARE_PATH |
-| FEELPP_CONFIG_PATH |
-| MODULEPATH     |
-| FEELPP_HPCNAME |
+| Variable name  | Description |
+| ---------      | ---------- |
+| FEELPP_MODULE_PATH | Absolute path to config/modules directory |
+| FEELPP_SHARE_PATH | Prefix absolute path to library install directory |
+| FEELPP_CONFIG_PATH | Absolute path to the config/ directory |
+| MODULEPATH     | Dynamic module path (Updated with local modules $HPCNAME path) |
+| FEELPP_HPCNAME | Name given to the cluster (By default, frontal hostname) |
