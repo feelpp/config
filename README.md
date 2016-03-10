@@ -1,78 +1,70 @@
 Configuration for cluster/supercomputers
 ========================================
 
-The motivations is to provide a flexible way to install
-new modules for the [dynamicmodules](http://modules.sourceforge.net/) software
-very common on HPC clusters. The following notes supposed that
-[dynamicmodules](http://modules.sourceforge.net/) is available on the
-current machine.
+The motivation is to provide a flexible way to install
+new modules for the [dynamicmodules](http://modules.sourceforge.net/),
+a set of scripts very common on HPC clusters. 
+[dynamicmodules](http://modules.sourceforge.net/) has to be installed first
+before going any further.
 
 # User notes
 
-## Description
-
-If config is installed, proceed with [Install](##Install) section else see
-[Administrators notes](#Administrators-notes) section.
-
 ## Installation
 
-For the user point of view, to load the Feel++ environment, with the new method:
+To load the modules config environment:
 
-1. Add the following lines in your system shell script (.bashrc, .cshrc, ...)
-to have access to local modules:
-```
-source /path/to/feelpprc.sh
-```
+1. Add the following lines in your favorite system shell script (.bashrc, ...)
+   ```
+   source /path/to/feelpprc.sh
+   ```
 2. Reload your shell to update your environment.
-3. Verify that the module config is loaded. A custom environment variable called HPCNAME
-should exist now with the given name for the current machine
-(The hostname is set by default).
-```
-echo $HPCNAME
-```
-If it nothin appears, contact your administrator.
+3. Verify that the config is loaded (The command `echo $HPCNAME` should return a non-empty string.
+   if nothing is returned, please verify first that you have correctly set the path
+   to the script. Otherwise please contact your administrator.
 
-NB: An error should appear after step 2. if something wrong happened.
+_NB: In general, the HPCNAME is set to the frontal hostname._
 
 ## Usage
 
 1. Now modules should be available. Print all available modules
-```
-module avail
-```
-Feel++ profiles and new modules should appear at the bottom of the
-printed list.
-If it is not the case go back to step 1. or contact your administrator.
+   ```
+   module avail
+   ```
+   Feel++ profiles and new modules should appear at the bottom of the
+   printed list.
+   If it is not the case go back to step 1. or contact your administrator.
+
 2. To load/unload a module just type
-```
-module load <modulename>
-module unload <modulename>
-```
+  ```
+  module load <modulename>
+  module unload <modulename>
+  ```
+
 3. Administrators provide profiles to load a list of modules
-compatible with the Feel++ library. Profiles should appears during step 4.,
+   compatible with the Feel++ library. Profiles should appears during step 1. (at the bottom).
 4. Administrators guaranty Feel++ compatibility only with existing profile!
-Profile can be loaded like any module.
-```
-  module load <profname.profile>
-```
+   Profile can be loaded like any module.
+   ```
+   module load <profname.profile>
+   ```
 Go to step 1. to see all available profile.
 
 # Administrators notes
 
-## Recommandation
+## Recommendation
 
-We recommend to compile and install libraries with the following directory
-naming convention
+We recommend to compile and install libraries using the following directory
+convention
 ```
 <prefix>/library_name/library_version/
 ```
-NB: Usually the prefix path is "/usr/local/". If are not a system administrator,
+NB: Usually the prefix path is "/usr/local/". If you are not a system administrator,
 libraries can be compiled in the home directory, for example
 `/home/toto/mylibcompiled/tool/paraview/5.5.0`.
 
 ## Tree
 
-This repository uses UNIX-like structure.
+This repository uses UNIX-like representation.
 
 ### Directory
 
@@ -83,9 +75,9 @@ This repository uses UNIX-like structure.
 | modules/                   | all modules scripts             |
 | modules/files/             | library modules                    |
 | modules/files/src/          | modules scripts sources                |
-| modules/files/\<$HPCNAME\>/  | symlink to module scripts per machine |
+| modules/files/$HPCNAME/  | symlink to module scripts per machine |
 | modules/profiles/            | profile modules  |
-| modules/profiles/\<$HPCNAME\>/ | profiles per machine           |
+| modules/profiles/$HPCNAME/ | profiles per machine           |
 
 ### Files
 
