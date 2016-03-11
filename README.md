@@ -140,6 +140,8 @@ Module files are tcl scripts. To create a new module,
     | --- | --- |
     | `totolib/1.4.0` | FEELPP_TOTOLIB140_PATH |
     | `totolib-1.4.0` | FEELPP_TOTOLIB140_PATH  (deprecated) |
+3. Create the dynamic module. We recommend to mimic the next following example (For advanced usage, see the [official
+documentation](http://modules.sourceforge.net/man/modulefile.html)). 
 
 3. You are done! Go back to section [Installation](develop#installation-1) to select
    your new module.
@@ -180,9 +182,6 @@ prepend-path LD_LIBRARY_PATH $prefix/lib
 prepend-path LD_LIBRARY_PATH $prefix/lib/paraview-5.0
 prepend-path PYTHONPATH $prefix/lib/paraview-5.0/site-packages
 ```
-
-For create advanced modules, see the [official
-documentation](http://modules.sourceforge.net/man/modulefile.html).
 
 ## Appendix.
 
