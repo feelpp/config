@@ -1,0 +1,24 @@
+#%Module1.0################
+## 
+## Sample libxml2 module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+set libxml2path $::env(FEELPP_LIBXML2_GCC_PATH)
+
+# won't be needed : only static libraries
+set libpath $libxml2path/lib
+set binpath $libxml2path/bin
+set includepath $libxml2path/include
+
+if [module-info mode load]  {
+	prepend-path PATH $binpath
+	prepend-path LD_LIBRARY_PATH $libpath
+}
+
+if [module-info mode remove] {
+
+	remove-path PATH $binpath
+	remove-path LD_LIBRARY_PATH $libpath
+
+}
