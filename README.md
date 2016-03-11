@@ -132,17 +132,19 @@ Module files are tcl scripts. To create a new module,
 2. Edit the new module script. You have to set two tcl variables in the script:
   - The library version
   - The library environment variable path. A module specific environment
-    variable must be defined with the following convention:
-    `FEELPP_<LIBNAME><LIBVERSION>_PATH` (e.g `FEELPP_PARAVIEW500_PATH`).
+    variable must be defined. By convention, it corresponds to the upper case
+    file name prefixed by FEELPP, and suffixed by PATH.
+    Example: 
+    
+    | File | Environment variable |
+    | --- | --- |
+    | `totolib/1.4.0` | FEELPP_TOTOLIB140_PATH |
+    | `totolib-1.4.0` | FEELPP_TOTOLIB140_PATH  (deprecated) |
 
 3. You are done! Go back to section [Installation](develop#installation-1) to select
    your new module.
 
 ##### Remarks:
-- If the library is compiler specific, we recommend to set also the compiler
-  name and version.
-  `FEELPP_<LIBNAME><LIBVERSION>_<COMPILERNAME><COMPILERVERSION>_PATH` (e.g
-  `FEELPP_PETSC362_OPENMPI163_PATH`).
 - Also, avoid punctuation in naming.
 
 #### Example:
