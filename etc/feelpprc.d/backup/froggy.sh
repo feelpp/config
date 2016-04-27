@@ -9,13 +9,13 @@
 ################################################################################
 
 # Load froggy env
-echo "Loading froggy env"
+echo "Loading froggy env : /applis/site/env.bash "
 . /applis/site/env.bash
 
-# Load gcc 4.8.2 from 
-echo "Loading gcc 4.8.2 env (courtesy of P. Begou)"
+# Adding path to gcc 4.8.2 modules from 
+echo "Adding path to gcc 4.8.2 to MODULEPATH : /home/PROJECTS/pr-snd/modulesfiles (courtesy of P. Begou)"
 export MODULEPATH=$MODULEPATH:/home/PROJECTS/pr-snd/modulesfiles
-module load Compilers-GCC48
+#module load Compilers-GCC48
 
 #------------------------------------------------------------------------------
 # CUSTOM PATH
@@ -39,11 +39,11 @@ export FEELPP_GCC463_PATH=
 export FEELPP_GCC472_PATH=
 export FEELPP_GCC473_PATH=
 export FEELPP_GCC481_PATH=
-export FEELPP_CMAKE28_PATH=
+export FEELPP_CMAKE28_PATH=$HOME/modules/tools/cmake-2.8.12.1_gcc_4.8.2
 
 # Libraries
 export FEELPP_BOOST149_AUTOCC_PATH=
-export FEELPP_BOOST154_GCC_PATH=
+export FEELPP_BOOST154_GCC_PATH=/home/trophime/modules/libs/boost-1.54_gcc_4.8.2_bullxmpi
 export FEELPP_PETSC33_GCC_PATH=
 export FEELPP_PETSC342_GCC_PATH=
 export FEELPP_SLEPC342_GCC_PATH=
@@ -80,4 +80,8 @@ export FEELPP_AUTOMAKE_GCC_PATH=$HOME/modules/tools/automake-1.14_gcc_4.8.2
 export FEELPP_LIBTOOL_GCC_PATH=$HOME/modules/tools/libtool-2.4.2_gcc_4.8.2
 export FEELPP_GLPK_GCC_PATH=$HOME/modules/libs/glpk-4.54_gcc_4.8.2
 export FEELPP_ANN_GCC_PATH=$HOME/modules/libs/ann-1.1.2+doc_gcc_4.8.2
+export FEELPP_LIBXML2_GCC_PATH=$HOME/modules/libs/libxml2-2.9.1+dfsg1
+
+echo "Loading gnu482.profile by default"
+module load gnu482.profile
 
