@@ -1,121 +1,199 @@
 Configuration for cluster/supercomputers
 ========================================
 
+The motivation is to provide a flexible way to install
+new modules for the [dynamicmodules](http://modules.sourceforge.net/),
+a set of scripts very common on HPC clusters. 
+[dynamicmodules](http://modules.sourceforge.net/) has to be installed first
+before going any further.
+
+Preamble: The new configuration method for administrators consists in a new python
+`configure` script. You should avoid editing files and/or symlinks by hand except 
+when it is mentionned explicitly.
+
 # User notes
 
-## Description
+## Installation
 
-The objectives of this repository is to provide a flexible replacement for
-`.bash_profile` copy/paste method by providing our own dynamic modules and meta
-profiles for each compiler. This is based on modules
+To load the modules config environment:
 
- - New local module scripts (petsc-*, boost-*,clang-*,gcc-*,...)
- - Users can create their own modules (see MODULEPATH variable)
- - Easy to upgrade and same usage for all clusters
+1. Add the following lines in your favorite system shell script (.bashrc, ...)
+   ```
+   source /path/to/feelpprc.sh
+   ```
+2. Reload your shell to update your environment.
+3. Verify that the config is loaded (The command `echo $HPCNAME` should return a non-empty string.
+   If nothing is returned, please verify first that you have correctly set the path
+   to the script. Otherwise please contact your administrator.
 
-## Install
+_NB: In general, the HPCNAME is set to the frontal hostname._
 
-For the user point of view, to load the Feel++ environment, with the new method:
+## Usage
 
-- First, users have to add this line in their .bashrc (or compatible sh shell)
+1. Now modules should be available. Print all available modules
+   ```
+   module avail
+   ```
+   Feel++ profiles and new modules should appear at the bottom of the
+   printed list.
+   If it is not the case go back to [installation section](develop#installation) step 1. .
+
+2. To load/unload a module just type
+  ```
+  module load <modulename>
+  module unload <modulename>
+  ```
+3. Administrators provide profiles to load a list of modules
+   compatible with the Feel++ library. Profiles should appears during step 1. (at the bottom).
+4. Administrators guaranty Feel++ compatibility only with existing profile!
+   Profile can be loaded like any module
+   ```
+   module load <profname.profile>
+   ```.
+
+# Administrator notes
+
+## Recommendation
+
+We recommend to compile and install libraries using the following directory
+convention
 ```
-# The cd commands are important, we use the current working directory for sourcing files
-# FEELPP_DIR is the directory where the config and custom built packages are stored
-cd $FEELPP_DIR/etc
-source feelpprc.sh
-cd -
+<prefix>/library_name/library_version/
 ```
-- Now, the new module should appears in the available modules list (in two
-  categories at the end), ``` module avail ```
-- There are several profiles available which are typically just a set of
-  modules. For example to load a clang-3.3 profile type, ``` module load
-  clang33.profile ```
-- Prefer to use `.profile` modules that guaranty a working environment!
-
-# Administrators notes
-
-The following notes supposed that
-[dynamicmodules](http://modules.sourceforge.net/) are available on the
-machine.
+NB: Usually the prefix path is "/usr/local/". If you are not a system administrator,
+libraries can be compiled in the home directory, for example
+`/home/toto/mylibcompiled/tool/paraview/5.5.0`.
 
 ## Tree
 
+This repository follows UNIX-like representation.
+
+### Directory
+
 | Directory                  | Description                    |
 | -------------------------- | ------------------------------ |
-| etc/                       | all configs scripts            |
-| etc/feelpprc.d/            | clusters custom configs        |
-| modules/                   | all dynamic modules            |
-| modules/files/             | modules                        |
-| modules/files/src          | modules sources                |
-| modules/files/\<machine\>    | symlink to modules per machine |
-| modules/profiles/            | profiles as a set of modules   |
-| modules/profiles/\<machine\> | profiles per machine           |
+| etc/                       | configuration scripts            |
+| etc/feelpprc.d/            | configuration per cluster        |
+| modules/                   | all modules scripts             |
+| modules/files/             | library modules                    |
+| modules/files/src/          | modules scripts sources                |
+| modules/files/$HPCNAME/  | symlink to module scripts per machine |
+| modules/profiles/            | profile modules  |
+| modules/profiles/$HPCNAME/ | profiles per machine           |
 
-## How to configure a new machine
+### Files
 
-You can run the configuration script
-`./configure` to (re)configure your machine, modules, etc...
+| File                 | Description                    |
+| -------------------------- | ------------------------------ |
+| etc/environment | all environment variables |
+| etc/feelpprc.sh | shell script to source to load modules |
 
-<hr>
-NOTE: This script will prompt a menu to automatise the following steps:
+## Installation
 
-- 1. Configure the hostname of the front-end. Create a file `etc/environment`
- which contains several environment variables:
- - `FEELPP_MODULE_PATH=<path/to/config.git/modules>`
- - `FEELPP_CONFIG_PATH=<path/to/config.git>`
- - `FEELPP_HPCNAME=<machine>`
- - `MODULEPATH=<path/to/config.git/modules/<machine>>:MODULEPATH`
- - `FEELPP_SHARE_PATH=<path/to/local/share/installs/>`
-- 2. Create symlinks per installed modules in `modules/files/<machine>` from existing modules
-  in `modules/files/src/` from your choice.
-- 3. Create a machine specific config file in `etc/feelpp.d/<machine>`. This file contains variables with the path to your software local installs only for modules installed during step 2 (You can check an example in `etc/feelpp.d/template.sh` to do it manually).
-<hr>
+A python configure script is provided to simplify the first environment setting
+and modules installation.
 
-**IMPORTANT: You still have to complete each path in the config file `etc/feelpp.d/<machine>` depending on your custom install**
+1. Run the configuration script.
+```
+./configure
+```
+2. Use the menu (1) to set the cluster name $HPCNAME and the prefix path to
+   library installation (default `/usr/local/feelpp/`).
+3. Use the menu (2) to select in the list all modules that are compiled and
+   installed.  If the library version is not available, go to 
+   [create new modules](develop#create-new-modules) section.
+4. Exit the configure script.
+5. A set of symlinks has been created for the current $HPCNAME machine.  You
+   have still to complete (by hand) the predefined path in the new
+   configuration script `etc/feelpprc.d/$HPCNAME.sh`.
 
+## Update installation
 
-## How to create a new module
+Just run the configuration script and make your changes.
 
-Module files are tcl scripts. To create a new module, just create a new file in `modules/files/src/` directory respecting the naming convention. Each module set at the first line a specific environment variable.
+*WARNING: Be careful when you deselect modules! The corresponding module
+VARIABLE will be removed from the cluster configuration script $HPCNAME.sh (not
+the module script) once validated!*
 
-- Module naming convention:
-`<libname>-<the.version>_<compilerused>.feelpp` (e.g `foo-1.0.feelpp`)
-- Module environment variable (uppercase, no dot!):
-`FEELPP_<LIBNAME>-<THEVERSION>_<COMPILERUSED>_PATH` (e.g `FEELPP_FOO10_PATH`)
+## Create new modules
 
-Note: The easiest way is to mimic existing modules and replace the custom environment variable following the naming convention.
+Create new module only if it is not listed in the configuration script menu (2).
 
-##### Example:
+Module files are tcl scripts. To create a new module,
+
+1. Create a new file in `modules/files/src/` directory respecting the
+   file/directory naming convention (Just copy/paste the an existing module).
+  - By convention, the name of the module is the version of the library (e.g
+    "1.0.0")
+  - By convention, the directory name is the name of the library (You should
+    sort library by type)  (e.g. paraview software module file
+    `modules/files/src/tools/paraview/5.0.0`).
+
+2. Edit the new module script. You have to set two tcl variables in the script:
+  - The library version
+  - The library environment variable path. A module specific environment
+    variable must be defined. By convention, it corresponds to the upper case
+    file name prefixed by FEELPP, and suffixed by PATH.
+    Example: 
+    
+    | File | Environment variable |
+    | --- | --- |
+    | `totolib/1.4.0` | FEELPP_TOTOLIB140_PATH |
+    | `totolib-1.4.0` | FEELPP_TOTOLIB140_PATH  (deprecated) |
+3. Create the dynamic module. We recommend to mimic the next following example (For advanced usage, see the [official
+documentation](http://modules.sourceforge.net/man/modulefile.html)). 
+
+3. You are done! Go back to section [Installation](develop#installation-1) to select
+   your new module.
+
+##### Remarks:
+- Also, avoid punctuation in naming.
+
+#### Example:
 
 ```bash
-touch modules/files/src/tool/foolib-1.0.feelpp
+touch modules/files/src/tools/foolib/1.0.5
 ```
 
-Edit this file with your favorite editor and put
+Edit the file "1.0.5"
 
 ```tcl
-# Environment variable.
-set mypath $::env(FEELPP_FOOLIB10_PATH)
-# Local paths.
-set mybinpath $mypath/bin
-set mylibpath $mypath/lib
+#%Module1.0#####################################################################
+###
+### Foolib 1.0.5 module
+###
+proc ModulesHelp { } {
+    global version prefix
 
-# Actions for `module load` command.
-if[module-info mode load] {
- prepend-path PATH $mybinpath
- prepend-path LD_LIBRARY_PATH $mylibpath
+    puts stderr "\ttools/FooLib/1.0.5 - loads FooLib 1.0.5 and its environment"
 }
 
-# Actions for `module unload` command.
-if[module-info mode remove] {
- remove-path PATH $mybinpath
- remove-path LD_LIBRARY_PATH $mylibpath
-}
+module-whatis   "Loads FooLib 1.0.5 and its environment"
+
+#----------------------------
+# CUSTOMIZE HERE
+set version     1.0.5
+set prefix      $::env(FEELPP_FOOLIB105_PATH)
+#----------------------------
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path PATH $prefix/bin
+prepend-path LD_LIBRARY_PATH $prefix/lib
+prepend-path LD_LIBRARY_PATH $prefix/lib/paraview-5.0
+prepend-path PYTHONPATH $prefix/lib/paraview-5.0/site-packages
 ```
-Run the `configure` script, select the new module in the module list, exit.
-Then edit the file `etc/feelpp.d/<machine>.sh` (where machine is the FEELPP_HPCNAME you set).
-The variable `FEELPP_FOOLIB10_PATH=` should be prefilled. Set this path to where foolib is installed (e.g `/usr/local/share/foolib`). 
-Then it's finished!
 
+## Appendix.
 
+### Environment variable
 
+The configure script set automatically several environment variables written in the file
+"etc/environment". You should not edit this file.
+
+| Variable name  | Description |
+| ---------      | ---------- |
+| FEELPP_MODULE_PATH | Absolute path to config/modules directory |
+| FEELPP_SHARE_PATH | Prefix absolute path to library install directory |
+| FEELPP_CONFIG_PATH | Absolute path to the config/ directory |
+| MODULEPATH     | Dynamic module path (Updated with local modules $HPCNAME path) |
+| FEELPP_HPCNAME | Name given to the cluster (By default, frontal hostname) |
