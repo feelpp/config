@@ -449,7 +449,14 @@ def writeActiveModuleList(moduleList):
     log.info("PREVMODULES=" + str(prevModules) + "\n\n")
 
     modfile=os.path.join(Settings["FEELPP_CONFIG_PATH"], "etc", "feelpprc.d", Settings["FEELPP_HPCNAME"] + ".sh")
-    f = open(modfile, "w")
+
+    # Catch the os exception when the user does not have the rights to write the file
+    # Avoiding emptying the file
+    try:
+        f = open(modfile, "w")
+    except Exception as e:
+        log.info("Cannot write module file. Aborting.")
+        return
 
     # Create directories and symlinks
     for m in moduleList:
