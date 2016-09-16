@@ -1,0 +1,33 @@
+#%Module1.0################
+##
+## Maintainer(s) : Alexandre Ancel <alexandre.ancel@cemosis.fr>
+## Maintainer(s) : Vincent Huber <vincent.huber@cemosis.fr>
+#
+set modulespath $::env(FEELPP_MODULE_PATH)/files/$::env(FEELPP_HPCNAME)
+set mpipath $::env(FEELPP_OPENMPI1103GCC490_PATH)
+
+# Dependency to at least one compiler.
+#set pattern1 "compilers/gcc*.feelpp"
+#set pattern2 "compilers/clang*.feelpp"
+#set compilers [glob -tails -directory $modulespath -type f $pattern1 $pattern2]
+#prereq {*}$compilers
+
+# Choose the right path to boost.
+set mpibinpath $mpipath/bin
+set mpilibpath $mpipath/lib
+set mpimanpath $mpipath/share/man
+
+if [module-info mode load]  {
+    prepend-path CMAKE_PREFIX_PATH $mpipath
+	prepend-path PATH $mpibinpath
+	prepend-path LD_LIBRARY_PATH $mpilibpath
+	prepend-path MANPATH $mpimanpath
+}
+
+if [module-info mode remove] {
+    remove-path CMAKE_PREFIX_PATH $mpipath
+	remove-path PATH $mpibinpath
+	remove-path LD_LIBRARY_PATH $mpilibpath
+	remove-path MANPATH $mpimanpath
+	unsetenv OMPI_LAST_CC
+}

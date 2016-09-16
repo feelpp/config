@@ -1,0 +1,21 @@
+#%Module1.0#####################################################################
+###
+### vmtk 1.2 module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\tlibs/vmtk/1.2 - loads vmtk 1.2"
+}
+
+module-whatis   "Loads vmtk 1.2"
+
+# for Tcl script use only
+set version     1.2
+set prefix      $::env(FEELPP_VMTK12_PATH)
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path PATH $prefix/bin
+prepend-path LD_LIBRARY_PATH $prefix/lib/vtk-5.10:$prefix/lib:$prefix/lib/vmtk
+prepend-path PYTHONPATH $prefix/bin/Python:$prefix/lib/vtk-5.10:$prefix/lib/vmtk
+setenv VMTKHOME $prefix

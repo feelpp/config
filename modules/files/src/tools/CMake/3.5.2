@@ -1,0 +1,18 @@
+#%Module1.0#####################################################################
+###
+### CMake 3.5.2 module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\ttools/CMake/3.5.2 - loads CMake 3.5.2 and its environment"
+}
+
+module-whatis   "Loads CMake 3.5.2 and its environment"
+
+# for Tcl script use only
+set version     3.5.2
+set prefix      $::env(FEELPP_CMAKE352_PATH)
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path PATH $prefix/bin

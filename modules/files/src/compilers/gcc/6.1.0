@@ -1,0 +1,19 @@
+#%Module1.0#####################################################################
+###
+### GCC 6.1.0 module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\tcompilers/gcc/6.1.0 - loads gcc 6.1.0 and its environment"
+}
+
+module-whatis   "Loads gcc 6.1.0 and its environment"
+
+# for Tcl script use only
+set version     6.1.0
+set prefix      $::env(FEELPP_GCC610_PATH)
+
+prepend-path PATH $prefix/bin
+prepend-path LD_LIBRARY_PATH $prefix/lib64
+prepend-path MANPATH $prefix/share/man

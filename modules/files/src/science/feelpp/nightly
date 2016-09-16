@@ -1,0 +1,19 @@
+#%Module1.0#####################################################################
+###
+### Feel++ nightly module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\tscience/feelpp/nightly - Nightly build for Feel++ (base on develop)"
+}
+
+module-whatis   "Loads Feel++ (nightly version)"
+
+# for Tcl script use only
+set version     nightly
+set prefix      $::env(FEELPP_NIGHTLY_PATH)
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path LD_LIBRARY_PATH $prefix/lib
+setenv FEELPP_DIR $prefix

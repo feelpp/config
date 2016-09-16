@@ -1,0 +1,21 @@
+#%Module1.0#####################################################################
+###
+### OpenMPI 5.0.0 module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\tmpi/openmpi/2.0.0 - loads OpenMPI 2.0.0 and its environment"
+}
+
+module-whatis   "Loads OpenMPI 2.0.0 and its environment"
+
+# for Tcl script use only
+set version     2.0.0
+set prefix      $::env(FEELPP_OPENMPI200_GCC610_PATH)
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path PATH $prefix/bin
+prepend-path LD_LIBRARY_PATH $prefix/lib
+prepend-path MANPATH $prefix/share/man
+

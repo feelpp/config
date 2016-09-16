@@ -1,0 +1,20 @@
+#%Module1.0#####################################################################
+###
+### Boost 1.61 module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\tlibs/Boost/1.61.0 - loads Boost 1.61.0"
+}
+
+module-whatis   "Loads Boost 1.61.0"
+
+# for Tcl script use only
+set version     1.61.0
+set prefix      $::env(FEELPP_BOOST161_GCC610_OMPI200_PATH)
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path PATH $prefix/bin
+prepend-path LD_LIBRARY_PATH $prefix/lib
+setenv BOOSTROOT $prefix

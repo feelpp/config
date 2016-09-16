@@ -1,0 +1,61 @@
+#%Module1.0################
+## 
+## Gnu compiler 4.8.2 module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+# Basic Path
+set modulespath $::env(FEELPP_MODULE_PATH)/files/$::env(FEELPP_HPCNAME)
+set gnupath $::env(FEELPP_GCC520_PATH)
+set gccdepspath $::env(FEELPP_SHARE_PATH)
+
+# conflict with others compilers version
+set pattern1 "compilers/gcc*.feelpp"
+#set pattern2 "compilers/clang*.feelpp"
+set compilers [glob -tails -directory $modulespath -type f $pattern1]
+#set compilers [glob -tails -directory $modulespath -type f $pattern1 $pattern2]
+conflict {*}$compilers
+
+#set ldlibpath "$gccdepspath/ppl/0.11/lib/:$gccdepspath/mpfr/2.4.2/lib/:$gccdepspath/cloog-ppl/0.15.11/lib/:$gccdepspath/mpc/0.8.1/lib/:$gccdepspath/gmp/4.3.2/lib/"
+set ldlibpath ""
+
+# Complete Pathes
+set gnubinpath $gnupath/bin
+set gnulibpath $gnupath/lib
+set gnulib64path $gnupath/lib64
+set gnumanpath $gnupath/share/man/man1/
+
+if [module-info mode load]  {
+	prepend-path CMAKE_PREFIX_PATH $gnupath
+	prepend-path PATH $gnubinpath
+	prepend-path LD_LIBRARY_PATH $gnulibpath 
+	prepend-path LD_LIBRARY_PATH $gnulib64path
+	prepend-path LD_LIBRARY_PATH $ldlibpath
+	prepend-path MANPATH $gnumanpath
+
+    unsetenv LANGUAGE
+	unsetenv LANG
+	unsetenv LC
+
+	setenv CC $gnubinpath/gcc
+	setenv CXX $gnubinpath/g++
+	setenv F77 $gnubinpath/gfortran
+	setenv F90 $gnubinpath/gfortran
+	setenv FC $gnubinpath/gfortran
+}
+
+if [module-info mode remove] {
+
+	remove-path CMAKE_PREFIX_PATH $gnupath
+	remove-path PATH $gnubinpath
+	remove-path LD_LIBRARY_PATH $ldlibpath
+	remove-path LD_LIBRARY_PATH $gnulibpath
+	remove-path LD_LIBRARY_PATH $gnulib64path
+	remove-path MANPATH $gnumanpath
+
+	unsetenv CC
+	unsetenv CXX
+	unsetenv F77
+	unsetenv F90
+    unsetenv FC
+}

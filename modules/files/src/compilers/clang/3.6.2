@@ -1,0 +1,67 @@
+#%Module1.0################
+## 
+## clang compiler 3.4 module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+# Basic Path
+#
+set modulespath $::env(FEELPP_MODULE_PATH)/files/$::env(FEELPP_HPCNAME)
+set clangpath $::env(FEELPP_CLANG362_PATH)
+
+# (initial non working version) grab the version of gcc, ensure that we have a version at least superior to 4.7 (clang 3.5 requires ABI 4.7)
+#set retcode [system gcc --version | grep gcc | cut -d" " -f3 | awk '{n=split($1, a, "."); if(n > 2 && a[1] * 10 + a[2] >= 47){ exit 1; }else{ exit 0; } }']
+
+# get gcc version, extract the first 2 numbers (e.g. 4.7), build a comparison string that is passe to bc for float comparison and test the return of bc
+# return 0 if not OK, exit status of xargs if ok
+#set retcode [system gcc --version | grep gcc | cut -d\" \" -f3 | cut -d\".\" -f1,2 | xargs echo \"4.7 <=\" | bc | xargs -I in test in -eq 0 ]
+
+#if {$retcode == 0} {
+	#system echo \"Clang 3.6 requires at least GCC 4.7 ABI (load a corresponding module)\"
+	#system echo \"Clang 3.6 module not loaded\"
+	#exit 0
+#}
+
+#set pattern1 "compilers/gcc*.feelpp"
+#set pattern2 "compilers/clang*.feelpp"
+#set compilers [glob -tails -directory $modulespath -type f $pattern1 $pattern2]
+
+# clang will only conflict, if there is an other version of clang loaded
+#set pattern "compilers/clang*.feelpp"
+#set compilers [glob -tails -directory $modulespath -type f $pattern]
+#conflict {*}$compilers
+
+# Complete Pathes
+set clangbinpath $clangpath/bin
+set clanglibpath $clangpath/lib
+set clangmanpath $clangpath/share/man/man1/
+
+if [module-info mode load]  {
+	prepend-path PATH $clangbinpath
+	prepend-path LD_LIBRARY_PATH $clanglibpath
+
+	prepend-path MANPATH $clangmanpath
+
+        unsetenv LANGUAGE
+	unsetenv LANG
+	unsetenv LC
+
+	setenv CC $clangbinpath/clang
+	setenv CXX $clangbinpath/clang++
+	#setenv F77 $clangbinpath/gfortran
+	#setenv F90 $clangbinpath/gfortran
+	#setenv FC $clangbinpath/gfortran
+}
+
+if [module-info mode remove] {
+
+	remove-path PATH $clangbinpath
+	remove-path LD_LIBRARY_PATH $clanglibpath
+	remove-path MANPATH $clangmanpath
+
+	unsetenv CC
+	unsetenv CXX
+	#unsetenv F77
+	#unsetenv F90
+        #unsetenv FC
+}

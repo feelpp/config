@@ -1,0 +1,24 @@
+#%Module1.0#####################################################################
+###
+### Slepc 3.7.3 Module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\tlibs/Slepc/3.7.2 - loads Slepc 3.7.2 module"
+}
+
+module-whatis   "Loads Slepc 3.7.2 and its environment"
+
+# for Tcl script use only
+set version     3.7.2
+set prefix      $::env(FEELPP_SLEPC372_GCC530_OMPI1102_PATH)
+
+set libpath $prefix/lib
+set binpath $prefix/bin
+set includepath $prefix/include
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path PATH $binpath
+prepend-path LD_LIBRARY_PATH $libpath
+prepend-path SLEPC_DIR $prefix

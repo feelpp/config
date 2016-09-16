@@ -1,0 +1,24 @@
+#%Module1.0#####################################################################
+###
+### Petsc 3.7.0 Module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\tlibs/Petsc/3.7.0 - loads PETSc 3.7.0 module"
+}
+
+module-whatis   "Loads PETSc 3.7.0 and its environment"
+
+# for Tcl script use only
+set version     3.7.0
+set prefix      $::env(FEELPP_PETSC370_PATH)
+
+set libpath $prefix/lib
+set binpath $prefix/bin
+set includepath $prefix/include
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path PATH $binpath
+prepend-path LD_LIBRARY_PATH $libpath
+prepend-path PETSC_DIR $prefix

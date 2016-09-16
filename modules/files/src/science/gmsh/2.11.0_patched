@@ -1,0 +1,19 @@
+#%Module1.0################
+set gmshpath $::env(FEELPP_GMSH2110_PATCHED_PATH)
+
+set gmshbinpath $gmshpath/bin
+set gmshlibpath $gmshpath/lib
+
+if [module-info mode load]  {
+    prepend-path CMAKE_PREFIX_PATH $gmshpath
+	prepend-path PATH $gmshbinpath
+	prepend-path GMSH_DIR $gmshpath
+	prepend-path LD_LIBRARY_PATH $gmshlibpath
+}
+
+if [module-info mode remove] {
+    remove-path CMAKE_PREFIX_PATH $gmshpath
+    remove-path PATH $gmshbinpath
+    remove-path GMSH_DIR $gmshpath
+    remove-path LD_LIBRARY_PATH $gmshlibpath
+}

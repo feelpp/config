@@ -13,6 +13,7 @@ if [module-info mode load]  {
 	prepend-path PATH $binpath
 	prepend-path LD_LIBRARY_PATH $libpath
 	setenv HDF5_ROOT $hdf5path
+    setenv HDF5_DIR $hdf5path
 }
 
 if [module-info mode remove] {
@@ -20,4 +21,5 @@ if [module-info mode remove] {
 	remove-path PATH $binpath
 	remove-path LD_LIBRARY_PATH $libpath
 	unsetenv HDF5_ROOT
+    unsetenv HDF5_DIR
 }

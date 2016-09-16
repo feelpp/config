@@ -1,0 +1,20 @@
+#%Module1.0#####################################################################
+###
+### FFTW 3.3.4
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\tlibs/fftw/3.3.4 - loads fftw 3.3.4"
+}
+
+module-whatis   "Loads fftw 3.3.4"
+
+# for Tcl script use only
+set version     3.3.4
+set prefix      $::env(FEELPP_FFTW334_GCC610_OMPI200_PATH)
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path PATH $prefix/bin
+prepend-path LD_LIBRARY_PATH $prefix/lib
+prepend-path PKG_CONFIG_PATH $prefix/lib/pkgconfig

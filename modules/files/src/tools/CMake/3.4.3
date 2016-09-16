@@ -1,0 +1,18 @@
+#%Module1.0#####################################################################
+###
+### CMake 3.4.3 module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\ttools/CMake/3.4.3 - loads CMake 3.4.3 and its environment"
+}
+
+module-whatis   "Loads CMake 3.4.3 and its environment"
+
+# for Tcl script use only
+set version     3.4.3
+set prefix      $::env(FEELPP_CMAKE343_PATH)
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path PATH $prefix/bin

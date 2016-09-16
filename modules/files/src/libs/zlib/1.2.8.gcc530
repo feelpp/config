@@ -1,0 +1,21 @@
+#%Module1.0################
+## 
+## zlib module
+#
+#
+
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\tlibs/zlib/1.2.8 - loads zlib 1.2.8"
+}
+
+module-whatis   "Loads zlib 1.8.17"
+#
+# for Tcl script use only
+set version     1.2.8
+set prefix      $::env(FEELPP_ZLIB128GCC530_PATH)
+
+prepend-path LD_LIBRARY_PATH $prefix/lib
+setenv ZLIB_DIR $prefix
+
