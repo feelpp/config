@@ -1,0 +1,22 @@
+#%Module1.0################
+## 
+## hdf5 module
+#
+#
+
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\tlibs/hdf5/1.8.17 - loads hdf5 1.8.17 and its environment"
+}
+
+module-whatis   "Loads hdf5 1.8.17 and its environment"
+#
+# for Tcl script use only
+set version     1.8.17
+set prefix      $::env(FEELPP_HDF51817_GCC530_OMPI1102_PATH)
+
+prepend-path PATH $prefix/bin
+prepend-path LD_LIBRARY_PATH $prefix/lib
+setenv HDF5_ROOT $prefix
+

@@ -1,0 +1,21 @@
+#%Module1.0#####################################################################
+###
+### GCC 5.3.0 module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\tcompilers/gcc/5.3.0 - loads Gnu compiler 5.3.0"
+}
+
+module-whatis   "Loads Gnu compiler 5.3.0"
+
+# for Tcl script use only
+set version     5.3.0
+set prefix      $::env(FEELPP_GCC530_PATH)
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path PATH $prefix/bin
+prepend-path LD_LIBRARY_PATH $prefix/lib 
+prepend-path LD_LIBRARY_PATH $prefix/lib64
+prepend-path MANPATH $prefix/share/man/man1

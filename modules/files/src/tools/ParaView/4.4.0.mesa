@@ -1,0 +1,21 @@
+#%Module1.0#####################################################################
+###
+### ParaView 4.4.0 with mesa module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\ttools/ParaView/4.4.0.mesa - loads ParaView 4.4.0 and its environment (mesa version)"
+}
+
+module-whatis   "Loads ParaView 4.4.0 and its environment (mesa version)"
+
+# for Tcl script use only
+set version     4.4.0.mesa
+set prefix      $::env(FEELPP_PARAVIEW440MESA_PATH)
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path PATH $prefix/bin
+prepend-path LD_LIBRARY_PATH $prefix/lib
+prepend-path LD_LIBRARY_PATH $prefix/lib/paraview-4.4
+prepend-path PYTHONPATH $prefix/lib/paraview-4.4/site-packages

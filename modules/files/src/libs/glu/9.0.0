@@ -1,0 +1,21 @@
+#%Module1.0################
+## 
+## glu module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+set glupath $::env(FEELPP_GLU900_PATH)
+
+set libpath $glupath/lib
+set pkgpath $glupath/lib/pkgconfig
+set includepath $glupath/include
+
+if [module-info mode load]  {
+	prepend-path LD_LIBRARY_PATH $libpath
+    prepend-path PKG_CONFIG_PATH $pkgpath
+}
+
+if [module-info mode remove] {
+	remove-path LD_LIBRARY_PATH $libpath
+    remove-path PKG_CONFIG_PATH $pkgpath
+}

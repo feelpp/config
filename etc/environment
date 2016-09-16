@@ -1,0 +1,5 @@
+FEELPP_MODULE_PATH=/data/software/config/modules
+FEELPP_SHARE_PATH=/data/software/install
+FEELPP_CONFIG_PATH=/data/software/config
+MODULEPATH=/data/software/config/modules/profiles/irma-atlas:/data/software/config/modules/files/irma-atlas:$MODULEPATH
+FEELPP_HPCNAME=irma-atlas

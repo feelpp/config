@@ -1,0 +1,25 @@
+#%Module1.0################
+## 
+## mesa module
+## Stdout dout contenir des commandes qui seront evaluees par le shell
+#
+#
+set mesapath $::env(FEELPP_MESA1102_PATH)
+
+set libpath $mesapath/lib
+set pkgpath $mesapath/lib/pkgconfig
+set binpath $mesapath/bin
+set includepath $mesapath/include
+
+if [module-info mode load]  {
+	prepend-path PATH $binpath
+	prepend-path LD_LIBRARY_PATH $libpath
+    prepend-path PKG_CONFIG_PATH $pkgpath
+}
+
+if [module-info mode remove] {
+
+	remove-path PATH $binpath
+	remove-path LD_LIBRARY_PATH $libpath
+    remove-path PKG_CONFIG_PATH $pkgpath
+}

@@ -1,0 +1,23 @@
+#%Module1.0################
+## 
+## starpu module
+#
+#
+set starpupath $::env(FEELPP_STARPU115_PATH)
+
+set libpath $starpupath/lib
+set binpath $starpupath/bin
+set includepath $starpupath/include
+set pkgconfigpath $starpupath/lib/pkgconfig
+
+if [module-info mode load]  {
+	prepend-path PATH $binpath
+	prepend-path LD_LIBRARY_PATH $libpath
+    prepend-path PKG_CONFIG_PATH $pkgconfigpath
+}
+
+if [module-info mode remove] {
+	remove-path PATH $binpath
+	remove-path LD_LIBRARY_PATH $libpath
+    remove-path PKG_CONFIG_PATH $pkgconfigpath
+}

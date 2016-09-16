@@ -1,0 +1,28 @@
+#%Module1.0#####################################################################
+###
+### Clang svn module
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\tcompiler/clang/svn - loads Clang svn and its environment"
+}
+
+module-whatis   "Loads Clang svn and its environment"
+
+# for Tcl script use only
+set version     4.0.0
+set prefix      $::env(FEELPP_CLANG400SVN_GCC530_PATH)
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path PATH $prefix/bin
+prepend-path LD_LIBRARY_PATH $prefix/lib
+prepend-path MANPATH $prefix/share/man
+
+unsetenv LANGUAGE
+unsetenv LANG
+unsetenv LC
+
+setenv CC $prefix/bin/clang
+setenv CXX $prefix/bin/clang++
+

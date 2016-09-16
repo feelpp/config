@@ -1,0 +1,21 @@
+#%Module1.0#####################################################################
+###
+### VTK 5.10.1
+###
+proc ModulesHelp { } {
+    global version prefix
+
+    puts stderr "\tlibs/VTK/5.10.1 - loads VTK 5.10.1 and its environment"
+}
+
+module-whatis   "Loads VTK 5.10.1 and its environment"
+
+# for Tcl script use only
+set version     5.10.1
+set prefix      $::env(FEELPP_VTK5101_PATH)
+
+prepend-path CMAKE_PREFIX_PATH $prefix
+prepend-path PATH $prefix/bin
+prepend-path LD_LIBRARY_PATH $prefix/lib/vtk-5.10
+#prepend-path PYTHONPATH $vtkpath/lib/vtk-5.10/site-packages
+setenv VTK_DIR $prefix
