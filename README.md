@@ -1,3 +1,9 @@
+========================
+## MASSIV WARNING !!! ##
+========================
+This repository is out of date : it has be moved to https://gitlab.math.unistra.fr
+contact: calcul@math.unistra.fr 
+
 Configuration for cluster/supercomputers
 ========================================
 
